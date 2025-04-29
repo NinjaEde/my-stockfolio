@@ -1,0 +1,93 @@
+import React, { useState } from 'react';
+import { PlusCircle } from 'lucide-react';
+import Input from './ui/Input';
+import Button from './ui/Button';
+import { addStock } from '../services/stockService';
+
+interface AddStockFormProps {
+  onStockAdded: () => void;
+}
+
+const AddStockForm: React.FC<AddStockFormProps> = ({ onStockAdded }) => {
+  const [ticker, setTicker] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!ticker) {
+      setError('Ticker symbol is required');
+      return;
+    }
+    
+    if (!displayName) {
+      setError('Display name is required');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const result = await addStock(ticker.toUpperCase(), displayName);
+      
+      if (result) {
+        setTicker('');
+        setDisplayName('');
+        onStockAdded();
+      } else {
+        setError('Failed to add stock. Please try again.');
+      }
+    } catch (err) {
+      setError('An error occurred while adding the stock');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+        <PlusCircle className="w-5 h-5 mr-2 text-blue-600" />
+        Add New Stock
+      </h2>
+      
+      <div className="flex flex-col md:flex-row gap-4">
+        <Input
+          label="Ticker Symbol"
+          placeholder="e.g., AAPL"
+          value={ticker}
+          onChange={(e) => setTicker(e.target.value)}
+          className="flex-1"
+          required
+        />
+        
+        <Input
+          label="Display Name"
+          placeholder="e.g., Apple Inc."
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+          className="flex-1"
+          required
+        />
+      </div>
+      
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      
+      <div className="flex justify-end">
+        <Button 
+          type="submit" 
+          disabled={loading}
+          className="transition-all duration-200 ease-in-out transform hover:scale-105"
+        >
+          {loading ? 'Adding...' : 'Add Stock'}
+        </Button>
+      </div>
+    </form>
+  );
+};
+
+export default AddStockForm;
