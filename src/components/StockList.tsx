@@ -65,7 +65,7 @@ const StockList: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-gray-800 mt-8 mb-4">Your Portfolio</h2>
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-400 mt-8 mb-4">Your Portfolio</h2>
       <div className="grid grid-cols-1 gap-6">
         {stocks.map((stock) => (
           <StockCard 
