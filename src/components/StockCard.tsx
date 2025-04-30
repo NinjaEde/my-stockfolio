@@ -5,6 +5,7 @@ import Button from './ui/Button';
 import { deleteStock, updateStock } from '../services/stockService';
 import { Stock } from '../types';
 import StockNotes from './StockNotes';
+import Input from './ui/Input';
 
 interface StockCardProps {
   stock: Stock;
@@ -79,59 +80,59 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
   return (
     <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500">
       <CardHeader className="flex justify-between items-center">
-        <div>
+        <div className="flex flex-col">
           {editing ? (
-            <div className="space-y-2 space-x-2">
-              <input
-                type="text"
-                value={tickerSymbol}
-                onChange={(e) => setTickerSymbol(e.target.value)}
-                className="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 dark:text-white"
-              />
-              <input
-                type="text"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                className="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 dark:text-white"
-              />
-              <Button size="sm" onClick={handleSave}>Save</Button>
-            </div>
+        <div className="space-y-2 flex items-start space-x-2">
+          <Input
+            placeholder="Ticker Symbol"
+            value={tickerSymbol}
+            onChange={(e) => setTickerSymbol(e.target.value)}
+            required
+          />
+          <Input
+            placeholder="Display Name"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            required
+          />
+          <Button size="sm" onClick={handleSave}>Save</Button>
+        </div>
           ) : (
-            <>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{stock.display_name}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-300">{stock.ticker_symbol}</p>
-            </>
+        <>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{stock.display_name}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-300">{stock.ticker_symbol}</p>
+        </>
           )}
         </div>
         <div className="flex items-center space-x-2">
           <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setEditing(!editing)}
-            className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+        variant="ghost"
+        size="sm"
+        onClick={() => setEditing(!editing)}
+        className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
           >
-            <FileEdit size={16} className="mr-1" />
-            {editing ? 'Cancel' : 'Edit'}
+        <FileEdit size={16} className="mr-1" />
+        {editing ? 'Cancel' : 'Edit'}
           </Button>
           <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setExpandedChart(!expandedChart)}
-            aria-label={expandedChart ? "Collapse Chart" : "Expand Chart"}
-            className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+        variant="ghost"
+        size="sm"
+        onClick={() => setExpandedChart(!expandedChart)}
+        aria-label={expandedChart ? "Collapse Chart" : "Expand Chart"}
+        className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
           >
-            {expandedChart ? <ChevronUp size={18} className="mr-1" /> : <ChevronDown size={18} className="mr-1" />}
-            {expandedChart ? 'Hide Chart' : 'Show Chart'}
+        {expandedChart ? <ChevronUp size={18} className="mr-1" /> : <ChevronDown size={18} className="mr-1" />}
+        {expandedChart ? 'Hide Chart' : 'Show Chart'}
           </Button>
           <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setExpandedNotes(!expandedNotes)}
-            aria-label={expandedNotes ? "Collapse Notes" : "Expand Notes"}
-            className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+        variant="ghost"
+        size="sm"
+        onClick={() => setExpandedNotes(!expandedNotes)}
+        aria-label={expandedNotes ? "Collapse Notes" : "Expand Notes"}
+        className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
           >
-            {expandedNotes ? <ChevronUp size={18} className="mr-1" /> : <ChevronDown size={18} className="mr-1" />}
-            {expandedNotes ? 'Hide Notes' : 'Show Notes'}
+        {expandedNotes ? <ChevronUp size={18} className="mr-1" /> : <ChevronDown size={18} className="mr-1" />}
+        {expandedNotes ? 'Hide Notes' : 'Show Notes'}
           </Button>
         </div>
       </CardHeader>
