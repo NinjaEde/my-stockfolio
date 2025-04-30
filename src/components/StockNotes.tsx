@@ -108,7 +108,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId }) => {
   return (
     <div className="space-y-6">
       <div>
-        <h4 className="text-md font-medium text-gray-800 mb-2">Add New Note</h4>
+        <h4 className="text-md font-medium text-gray-800 mb-2 dark:text-gray-400">Add New Note</h4>
         <form onSubmit={handleAddNote} className="space-y-3">
           <div className="flex justify-end mb-2">
             <Button
@@ -128,7 +128,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId }) => {
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
             rows={4}
-            className="font-mono text-sm"
+            className="font-mono text-sm bg-white dark:bg-gray-800 dark:text-white"
           />
           
           {error && <p className="text-sm text-red-600">{error}</p>}
@@ -160,7 +160,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId }) => {
             {notes.map((note) => (
               <div 
                 key={note.id} 
-                className="p-4 bg-gray-50 rounded-md border border-gray-100"
+                className="p-4 bg-gray-50 rounded-md border border-gray-100 dark:bg-gray-700 dark:border-gray-600"
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-xs text-gray-500">

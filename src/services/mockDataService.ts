@@ -115,3 +115,18 @@ export const deleteNote = async (id: string): Promise<boolean> => {
     return false;
   }
 };
+
+export const updateStock = async (id: string, updates: Partial<Stock>): Promise<boolean> => {
+  try {
+    const stocks = getStoredStocks();
+    const stockIndex = stocks.findIndex(stock => stock.id === id);
+    if (stockIndex === -1) return false;
+
+    stocks[stockIndex] = { ...stocks[stockIndex], ...updates };
+    setStoredStocks(stocks);
+    return true;
+  } catch (error) {
+    console.error('Error updating stock:', error);
+    return false;
+  }
+};

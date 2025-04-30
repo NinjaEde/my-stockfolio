@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart4, Trash2, ChevronDown, ChevronUp, FileEdit } from 'lucide-react';
 import Card, { CardHeader, CardContent, CardFooter } from './ui/Card';
 import Button from './ui/Button';
-import { deleteStock } from '../services/stockService';
+import { deleteStock, updateStock } from '../services/stockService';
 import { Stock } from '../types';
 import StockNotes from './StockNotes';
 
@@ -12,13 +12,16 @@ interface StockCardProps {
 }
 
 const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
-  const [expanded, setExpanded] = useState(false);
+  const [expandedChart, setExpandedChart] = useState(false);
+  const [expandedNotes, setExpandedNotes] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+  const [editing, setEditing] = useState(false);
+  const [tickerSymbol, setTickerSymbol] = useState(stock.ticker_symbol);
+  const [displayName, setDisplayName] = useState(stock.display_name);
+
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete ${stock.display_name}? This will also delete all associated notes.`)) {
       setIsDeleting(true);
-      
       try {
         const result = await deleteStock(stock.id);
         if (result) {
@@ -32,8 +35,17 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
     }
   };
 
+  const handleSave = async () => {
+    try {
+      await updateStock(stock.id, { ticker_symbol: tickerSymbol, display_name: displayName });
+      setEditing(false);
+    } catch (error) {
+      console.error('Error updating stock:', error);
+    }
+  };
+
   useEffect(() => {
-    if (expanded) {
+    if (expandedChart) {
       const script = document.createElement('script');
       script.src = 'https://s3.tradingview.com/tv.js';
       script.async = true;
@@ -60,61 +72,103 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         document.head.removeChild(script);
       };
     }
-  }, [expanded, stock.ticker_symbol, stock.id]);
-  
+  }, [expandedChart, stock.ticker_symbol, stock.id]);
+
   const tradingViewUrl = `https://de.tradingview.com/chart/${stock.chart_id}?symbol=${stock.ticker_symbol}`;
-  
+
   return (
-    <Card className="transition-all duration-300 ease-in-out hover:shadow-md">
+    <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500">
       <CardHeader className="flex justify-between items-center">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">{stock.display_name}</h3>
-          <p className="text-sm text-gray-500">{stock.ticker_symbol}</p>
+          {editing ? (
+            <div className="space-y-2 space-x-2">
+              <input
+                type="text"
+                value={tickerSymbol}
+                onChange={(e) => setTickerSymbol(e.target.value)}
+                className="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 dark:text-white"
+              />
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 dark:text-white"
+              />
+              <Button size="sm" onClick={handleSave}>Save</Button>
+            </div>
+          ) : (
+            <>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{stock.display_name}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-300">{stock.ticker_symbol}</p>
+            </>
+          )}
         </div>
-        
         <div className="flex items-center space-x-2">
-          <a 
-            href={tradingViewUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-          >
-            <BarChart4 className="w-4 h-4 mr-1" />
-            <span>Chart</span>
-          </a>
-          
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
-            onClick={() => setExpanded(!expanded)}
-            aria-label={expanded ? "Collapse" : "Expand"}
-            className="ml-2"
+            onClick={() => setEditing(!editing)}
+            className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
           >
-            {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            <FileEdit size={16} className="mr-1" />
+            {editing ? 'Cancel' : 'Edit'}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setExpandedChart(!expandedChart)}
+            aria-label={expandedChart ? "Collapse Chart" : "Expand Chart"}
+            className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+          >
+            {expandedChart ? <ChevronUp size={18} className="mr-1" /> : <ChevronDown size={18} className="mr-1" />}
+            {expandedChart ? 'Hide Chart' : 'Show Chart'}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setExpandedNotes(!expandedNotes)}
+            aria-label={expandedNotes ? "Collapse Notes" : "Expand Notes"}
+            className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+          >
+            {expandedNotes ? <ChevronUp size={18} className="mr-1" /> : <ChevronDown size={18} className="mr-1" />}
+            {expandedNotes ? 'Hide Notes' : 'Show Notes'}
           </Button>
         </div>
       </CardHeader>
-      
-      {expanded && (
-        <CardContent className="border-t border-gray-100 space-y-6">
-          <div className="w-full h-[400px] bg-white">
+
+      {expandedChart && (
+        <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-6">
+          <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
             <div id={`tradingview_${stock.id}`}></div>
           </div>
+          <a
+            href={tradingViewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            <BarChart4 size={16} className="mr-1" />
+            Open in TradingView
+          </a>
+        </CardContent>
+      )}
+
+      {expandedNotes && (
+        <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-6">
           <StockNotes stockId={stock.id} />
         </CardContent>
       )}
-      
+
       <CardFooter className="flex justify-between items-center">
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-gray-500 dark:text-gray-300">
           Added on {new Date(stock.created_at).toLocaleDateString()}
         </p>
-        
-        <Button 
-          variant="danger" 
+        <Button
+          variant="danger"
           size="sm"
           onClick={handleDelete}
           disabled={isDeleting}
-          className="flex items-center"
+          className="flex items-center bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600"
         >
           <Trash2 className="w-4 h-4 mr-1" />
           {isDeleting ? 'Deleting...' : 'Delete'}
