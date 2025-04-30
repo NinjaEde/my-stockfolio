@@ -2,17 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { getStocks } from '../services/stockService';
 import { Stock } from '../types';
 import StockCard from './StockCard';
+import Input from './ui/Input';
 
 const StockList: React.FC = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
+  const [filteredStocks, setFilteredStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const loadStocks = async () => {
     setLoading(true);
     try {
       const stocksData = await getStocks();
       setStocks(stocksData);
+      setFilteredStocks(stocksData);
       setError('');
     } catch (err) {
       console.error('Error loading stocks:', err);
@@ -25,6 +29,16 @@ const StockList: React.FC = () => {
   useEffect(() => {
     loadStocks();
   }, []);
+
+  useEffect(() => {
+    const query = searchQuery.toLowerCase();
+    const filtered = stocks.filter(
+      (stock) =>
+        stock.ticker_symbol.toLowerCase().includes(query) ||
+        stock.display_name.toLowerCase().includes(query)
+    );
+    setFilteredStocks(filtered);
+  }, [searchQuery, stocks]);
 
   const handleStockDeleted = () => {
     loadStocks();
@@ -55,26 +69,36 @@ const StockList: React.FC = () => {
     );
   }
 
-  if (stocks.length === 0) {
-    return (
-      <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-md p-6 my-4 text-center">
-        <p className="text-lg">No stocks added yet. Add your first stock above!</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-400 mt-8 mb-4">Your Portfolio</h2>
-      <div className="grid grid-cols-1 gap-6">
-        {stocks.map((stock) => (
-          <StockCard 
-            key={stock.id} 
-            stock={stock} 
-            onDelete={handleStockDeleted} 
-          />
-        ))}
-      </div>
+      {stocks.length > 0 && (
+        <Input
+          placeholder="Search by ticker symbol or display name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="mb-4"
+        />
+      )}
+      {stocks.length === 0 ? (
+        <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-md p-6 my-4 text-center">
+          <p className="text-lg">No stocks added yet. Add your first stock above!</p>
+        </div>
+      ) : filteredStocks.length === 0 ? (
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-md p-6 my-4 text-center">
+          <p className="text-lg">No stocks match your search. Try a different query.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6">
+          {filteredStocks.map((stock) => (
+            <StockCard 
+              key={stock.id} 
+              stock={stock} 
+              onDelete={handleStockDeleted} 
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Trash2, ListChecks } from 'lucide-react';
+import { Trash2, ListChecks, PlusCircle, MinusCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Button from './ui/Button';
@@ -39,6 +39,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId }) => {
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState('');
+  const [showAddNote, setShowAddNote] = useState(false); // Toggle state for "Add New Note"
 
   const loadNotes = async () => {
     setLoading(true);
@@ -108,41 +109,65 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId }) => {
   return (
     <div className="space-y-6">
       <div>
-        <h4 className="text-md font-medium text-gray-800 mb-2 dark:text-gray-400">Add New Note</h4>
-        <form onSubmit={handleAddNote} className="space-y-3">
-          <div className="flex justify-end mb-2">
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={insertTemplate}
-              className="flex items-center gap-2"
-            >
-              <ListChecks size={16} />
-              Insert Checklist Template
-            </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowAddNote(!showAddNote)}
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+        >
+          {showAddNote ? (
+            <>
+              <MinusCircle size={16} />
+              Hide Add Note
+            </>
+          ) : (
+            <>
+              <PlusCircle size={16} />
+              Add New Note
+            </>
+          )}
+        </Button>
+
+        {showAddNote && (
+          <div className="mt-4">
+            <h4 className="text-md font-medium text-gray-800 mb-2 dark:text-gray-400">Add New Note</h4>
+            <form onSubmit={handleAddNote} className="space-y-3">
+              <div className="flex justify-end mb-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={insertTemplate}
+                  className="flex items-center gap-2"
+                >
+                  <ListChecks size={16} />
+                  Insert Checklist Template
+                </Button>
+              </div>
+              
+              <Textarea
+                placeholder="Write your note in Markdown format..."
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                rows={4}
+                className="font-mono text-sm bg-white dark:bg-gray-800 dark:text-white"
+              />
+              
+              {error && <p className="text-sm text-red-600">{error}</p>}
+              
+              <div className="text-right">
+                <Button 
+                  type="submit" 
+                  disabled={adding || !newNote.trim()}
+                  size="sm"
+                >
+                  {adding ? 'Saving...' : 'Save Note'}
+                </Button>
+              </div>
+            </form>
           </div>
-          
-          <Textarea
-            placeholder="Write your note in Markdown format..."
-            value={newNote}
-            onChange={(e) => setNewNote(e.target.value)}
-            rows={4}
-            className="font-mono text-sm bg-white dark:bg-gray-800 dark:text-white"
-          />
-          
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          
-          <div className="text-right">
-            <Button 
-              type="submit" 
-              disabled={adding || !newNote.trim()}
-              size="sm"
-            >
-              {adding ? 'Saving...' : 'Save Note'}
-            </Button>
-          </div>
-        </form>
+        )}
       </div>
       
       <div>
