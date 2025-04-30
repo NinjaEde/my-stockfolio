@@ -12,6 +12,8 @@ StockfolioPro is a web application for managing your stock portfolio. It allows 
 - Technical analysis checklist templates
 - Responsive design that works on desktop and mobile devices
 - Offline-first functionality with local storage
+- **Dark mode support** with user preference persistence
+- **Real-time updates** for stock and note management
 - Built with modern React and TypeScript
 
 ## Technologies Used
@@ -92,7 +94,11 @@ stockfolio/
    - Notes support Markdown formatting including lists, headers, and code blocks
    - Click "Insert Checklist Template" to add a pre-formatted technical analysis template
 
-4. **Deleting Items**
+4. **Dark Mode**
+   - Toggle between light and dark mode using the button in the header
+   - Your preference is saved and applied automatically on your next visit
+
+5. **Deleting Items**
    - Click the "Delete" button on a stock card to remove it and all its associated notes
    - Click the trash icon on individual notes to delete just that note
 
@@ -115,7 +121,6 @@ The built files will be in the `dist` directory, ready to be deployed to any sta
 - Performance metrics and portfolio analytics
 - Stock price alerts and notifications
 - Watchlist functionality
-- Dark mode theme
 
 ## License
 
