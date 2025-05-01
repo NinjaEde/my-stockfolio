@@ -14,7 +14,7 @@ interface StockCardProps {
 
 const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
   const [expandedDetails, setExpandedDetails] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'trend' | 'chart' | 'notes'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'trend' | 'chart' | 'notes' | 'financials'>('overview');
   const [isDeleting, setIsDeleting] = useState(false);
   const [editing, setEditing] = useState(false);
   const [tickerSymbol, setTickerSymbol] = useState(stock.ticker_symbol);
@@ -138,6 +138,32 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
     }
   }, [expandedDetails, activeTab, stock.ticker_symbol, tradingViewUrl]);
 
+  useEffect(() => {
+    if (expandedDetails && activeTab === 'financials') {
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-financials.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        isTransparent: false,
+        largeChartUrl: tradingViewUrl,
+        displayMode: "regular",
+        width: "100%",
+        height: 400,
+        colorTheme: document.documentElement.classList.contains('dark') ? "dark" : "light",
+        symbol: stock.ticker_symbol,
+        locale: "de_DE",
+      });
+      const container = document.getElementById(`financials-widget_${stock.id}`);
+      container?.appendChild(script);
+
+      return () => {
+        if (script.parentNode === container) {
+          container?.removeChild(script);
+        }
+      };
+    }
+  }, [expandedDetails, activeTab, stock.ticker_symbol, tradingViewUrl]);
+
   return (
     <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500">
       <CardHeader className="flex justify-between items-center">
@@ -204,6 +230,12 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
               Chart
             </button>
             <button
+              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'financials' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+              onClick={() => setActiveTab('financials')}
+            >
+              Financials
+            </button>
+            <button
               className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'notes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
               onClick={() => setActiveTab('notes')}
             >
@@ -239,6 +271,12 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
 
           {activeTab === 'notes' && (
             <StockNotes stockId={stock.id} onNotesUpdated={refreshNoteCount} />
+          )}
+
+          {activeTab === 'financials' && (
+            <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
+              <div id={`financials-widget_${stock.id}`}></div>
+            </div>
           )}
         </CardContent>
       )}
