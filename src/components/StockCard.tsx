@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart4, Trash2, ChevronDown, ChevronUp, FileEdit } from 'lucide-react';
 import Card, { CardHeader, CardContent, CardFooter } from './ui/Card';
 import Button from './ui/Button';
-import { deleteStock, updateStock } from '../services/stockService';
+import { deleteStock, updateStock, getNotes } from '../services/stockService';
 import { Stock } from '../types';
 import StockNotes from './StockNotes';
 import Input from './ui/Input';
@@ -19,6 +19,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
   const [editing, setEditing] = useState(false);
   const [tickerSymbol, setTickerSymbol] = useState(stock.ticker_symbol);
   const [displayName, setDisplayName] = useState(stock.display_name);
+  const [noteCount, setNoteCount] = useState(0);
 
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete ${stock.display_name}? This will also delete all associated notes.`)) {
@@ -44,6 +45,15 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
       console.error('Error updating stock:', error);
     }
   };
+
+  const refreshNoteCount = async () => {
+    const notes = await getNotes(stock.id);
+    setNoteCount(notes.length);
+  };
+
+  useEffect(() => {
+    refreshNoteCount();
+  }, [stock.id]);
 
   useEffect(() => {
     if (expandedDetails && activeTab === 'chart') {
@@ -131,35 +141,31 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-6">
           <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-600 pb-2">
             <button
-              className={`px-4 py-2 text-sm font-medium ${activeTab === 'chart' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'chart' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
               onClick={() => setActiveTab('chart')}
             >
               Chart
             </button>
             <button
-              className={`px-4 py-2 text-sm font-medium ${activeTab === 'notes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'notes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
               onClick={() => setActiveTab('notes')}
             >
               Notes
+              {noteCount > 0 && (
+                <span className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-600 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+                  {noteCount}
+                </span>
+              )}
             </button>
           </div>
 
           {activeTab === 'chart' && (
             <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
               <div id={`tradingview_${stock.id}`}></div>
-              <a
-                href={tradingViewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mt-2"
-              >
-                <BarChart4 size={16} className="mr-1" />
-                Open in TradingView
-              </a>
             </div>
           )}
 
-          {activeTab === 'notes' && <StockNotes stockId={stock.id} />}
+          {activeTab === 'notes' && <StockNotes stockId={stock.id} onNotesUpdated={refreshNoteCount} />}
         </CardContent>
       )}
 
@@ -167,6 +173,17 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         <p className="text-xs text-gray-500 dark:text-gray-300">
           Added on {new Date(stock.created_at).toLocaleDateString()}
         </p>
+
+        <a
+          href={tradingViewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mt-2"
+        >
+          <BarChart4 size={16} className="mr-1" />
+          Open in TradingView
+        </a>
+
         <Button
           variant="danger"
           size="sm"

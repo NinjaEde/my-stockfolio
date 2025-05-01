@@ -10,6 +10,7 @@ import { Note } from '../types';
 
 interface StockNotesProps {
   stockId: string;
+  onNotesUpdated?: () => void; // Add optional callback
 }
 
 const CHECKLIST_TEMPLATE = `### Technical Analysis Checklist
@@ -33,7 +34,7 @@ Additional Notes:
 
 `;
 
-const StockNotes: React.FC<StockNotesProps> = ({ stockId }) => {
+const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [newNote, setNewNote] = useState('');
   const [loading, setLoading] = useState(true);
@@ -74,6 +75,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId }) => {
       if (result) {
         setNewNote('');
         loadNotes();
+        onNotesUpdated?.(); // Notify parent
       } else {
         setError('Failed to add note');
       }
@@ -91,6 +93,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId }) => {
         const result = await deleteNote(noteId);
         if (result) {
           loadNotes();
+          onNotesUpdated?.(); // Notify parent
         }
       } catch (err) {
         console.error('Error deleting note:', err);
