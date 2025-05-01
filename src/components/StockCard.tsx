@@ -119,9 +119,9 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         interval: "1D",
         width: "100%",
         isTransparent: true,
-        height: 365,
+        height: "100%",
         symbol: stock.ticker_symbol,
-        showIntervalTabs: true,
+        showIntervalTabs: false,
         displayMode: "single",
         locale: "en",
         colorTheme: document.documentElement.classList.contains('dark') ? "dark" : "light",
@@ -218,7 +218,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
 
           {activeTab === 'overview' && (
             <div className="flex flex-wrap gap-4">
-              <section id={`symbol-info_${stock.id}`} className="flex-1 min-w-[300px]">
+              <section id={`symbol-info_${stock.id}`} className="flex-2 min-w-[150px]">
                 <div className="tradingview-widget-container">
                   <div className="tradingview-widget-container__widget"></div>
                 </div>
