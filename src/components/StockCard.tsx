@@ -14,12 +14,14 @@ interface StockCardProps {
 
 const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
   const [expandedDetails, setExpandedDetails] = useState(false);
-  const [activeTab, setActiveTab] = useState<'chart' | 'notes'>('chart');
+  const [activeTab, setActiveTab] = useState<'overview' | 'trend' | 'chart' | 'notes'>('overview');
   const [isDeleting, setIsDeleting] = useState(false);
   const [editing, setEditing] = useState(false);
   const [tickerSymbol, setTickerSymbol] = useState(stock.ticker_symbol);
   const [displayName, setDisplayName] = useState(stock.display_name);
   const [noteCount, setNoteCount] = useState(0);
+
+  const tradingViewUrl = `https://de.tradingview.com/chart/${stock.chart_id}?symbol=${stock.ticker_symbol}`;
 
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete ${stock.display_name}? This will also delete all associated notes.`)) {
@@ -85,7 +87,56 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
     }
   }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id]);
 
-  const tradingViewUrl = `https://de.tradingview.com/chart/${stock.chart_id}?symbol=${stock.ticker_symbol}`;
+  useEffect(() => {
+    if (expandedDetails && activeTab === 'overview') {
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        symbol: stock.ticker_symbol,
+        width: "100%",
+        locale: "en",
+        colorTheme: document.documentElement.classList.contains('dark') ? "dark" : "light",
+        isTransparent: true,
+      });
+      const container = document.getElementById(`symbol-info_${stock.id}`);
+      container?.appendChild(script);
+
+      return () => {
+        if (script.parentNode === container) {
+          container?.removeChild(script);
+        }
+      };
+    }
+  }, [expandedDetails, activeTab, stock.ticker_symbol]);
+
+  useEffect(() => {
+    if (expandedDetails && activeTab === 'trend') {
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        interval: "1D",
+        width: "100%",
+        isTransparent: true,
+        height: 450,
+        symbol: stock.ticker_symbol,
+        showIntervalTabs: true,
+        displayMode: "single",
+        locale: "en",
+        colorTheme: document.documentElement.classList.contains('dark') ? "dark" : "light",
+        largeChartUrl: tradingViewUrl,
+      });
+      const container = document.getElementById(`trend-widget_${stock.id}`);
+      container?.appendChild(script);
+
+      return () => {
+        if (script.parentNode === container) {
+          container?.removeChild(script);
+        }
+      };
+    }
+  }, [expandedDetails, activeTab, stock.ticker_symbol, tradingViewUrl]);
 
   return (
     <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500">
@@ -141,6 +192,18 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-6">
           <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-600 pb-2">
             <button
+              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'overview' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+              onClick={() => setActiveTab('overview')}
+            >
+              Overview
+            </button>
+            <button
+              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'trend' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+              onClick={() => setActiveTab('trend')}
+            >
+              Trend
+            </button>
+            <button
               className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'chart' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
               onClick={() => setActiveTab('chart')}
             >
@@ -159,13 +222,36 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
             </button>
           </div>
 
+          {activeTab === 'overview' && (
+            <section id={`symbol-info_${stock.id}`} className="mt-4">
+              <div className="tradingview-widget-container">
+                <div className="tradingview-widget-container__widget"></div>
+              </div>
+            </section>
+          )}
+
+          {activeTab === 'trend' && (
+            <section id={`trend-widget_${stock.id}`} className="mt-4">
+              <div className="tradingview-widget-container">
+                <div className="tradingview-widget-container__widget"></div>
+                <div className="tradingview-widget-copyright">
+                  <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+                    <span className="blue-text">Track all markets on TradingView</span>
+                  </a>
+                </div>
+              </div>
+            </section>
+          )}
+
           {activeTab === 'chart' && (
             <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
               <div id={`tradingview_${stock.id}`}></div>
             </div>
           )}
 
-          {activeTab === 'notes' && <StockNotes stockId={stock.id} onNotesUpdated={refreshNoteCount} />}
+          {activeTab === 'notes' && (
+            <StockNotes stockId={stock.id} onNotesUpdated={refreshNoteCount} />
+          )}
         </CardContent>
       )}
 
