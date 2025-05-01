@@ -111,15 +111,15 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
   }, [expandedDetails, activeTab, stock.ticker_symbol]);
 
   useEffect(() => {
-    if (expandedDetails && activeTab === 'trend') {
+    if (expandedDetails && activeTab === 'overview') {
       const script = document.createElement('script');
       script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
       script.async = true;
       script.innerHTML = JSON.stringify({
         interval: "1D",
         width: "100%",
-        isTransparent: false,
-        height: 450,
+        isTransparent: true,
+        height: 365,
         symbol: stock.ticker_symbol,
         showIntervalTabs: true,
         displayMode: "single",
@@ -198,12 +198,6 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
               Overview
             </button>
             <button
-              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'trend' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('trend')}
-            >
-              Trend
-            </button>
-            <button
               className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'chart' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
               onClick={() => setActiveTab('chart')}
             >
@@ -223,19 +217,18 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
           </div>
 
           {activeTab === 'overview' && (
-            <section id={`symbol-info_${stock.id}`} className="mt-4">
-              <div className="tradingview-widget-container">
-                <div className="tradingview-widget-container__widget"></div>
-              </div>
-            </section>
-          )}
-
-          {activeTab === 'trend' && (
-            <section id={`trend-widget_${stock.id}`} className="mt-4">
-              <div className="tradingview-widget-container">
-                <div className="tradingview-widget-container__widget"></div>
-              </div>
-            </section>
+            <div className="flex flex-wrap gap-4">
+              <section id={`symbol-info_${stock.id}`} className="flex-1 min-w-[300px]">
+                <div className="tradingview-widget-container">
+                  <div className="tradingview-widget-container__widget"></div>
+                </div>
+              </section>
+              <section id={`trend-widget_${stock.id}`} className="flex-1 min-w-[300px]">
+                <div className="tradingview-widget-container">
+                  <div className="tradingview-widget-container__widget"></div>
+                </div>
+              </section>
+            </div>
           )}
 
           {activeTab === 'chart' && (
