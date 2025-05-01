@@ -67,7 +67,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
           "symbol": stock.ticker_symbol,
           "interval": "D",
           "timezone": "Europe/Berlin",
-          "theme": "light",
+          "theme": document.documentElement.classList.contains('dark') ? "dark" : "light",
           "style": "1",
           "locale": "de_DE",
           "toolbar_bg": "#f1f3f6",
@@ -169,7 +169,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         </CardContent>
       )}
 
-      <CardFooter className="flex justify-between items-center">
+      <CardFooter className="flex justify-between items-center dark:bg-gray-700">
         <p className="text-xs text-gray-500 dark:text-gray-300">
           Added on {new Date(stock.created_at).toLocaleDateString()}
         </p>
