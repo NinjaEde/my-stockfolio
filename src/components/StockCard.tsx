@@ -118,7 +118,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
       script.innerHTML = JSON.stringify({
         interval: "1D",
         width: "100%",
-        isTransparent: true,
+        isTransparent: false,
         height: 450,
         symbol: stock.ticker_symbol,
         showIntervalTabs: true,
@@ -234,11 +234,6 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
             <section id={`trend-widget_${stock.id}`} className="mt-4">
               <div className="tradingview-widget-container">
                 <div className="tradingview-widget-container__widget"></div>
-                <div className="tradingview-widget-copyright">
-                  <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
-                    <span className="blue-text">Track all markets on TradingView</span>
-                  </a>
-                </div>
               </div>
             </section>
           )}
