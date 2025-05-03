@@ -130,3 +130,18 @@ export const updateStock = async (id: string, updates: Partial<Stock>): Promise<
     return false;
   }
 };
+
+export const updateNote = async (id: string, content: string): Promise<boolean> => {
+  try {
+    const notes = getStoredNotes();
+    const noteIndex = notes.findIndex((note) => note.id === id);
+    if (noteIndex === -1) return false;
+
+    notes[noteIndex] = { ...notes[noteIndex], content, created_at: new Date().toISOString() };
+    setStoredNotes(notes);
+    return true;
+  } catch (error) {
+    console.error('Error updating note:', error);
+    return false;
+  }
+};
