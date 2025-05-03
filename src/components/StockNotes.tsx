@@ -120,7 +120,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
       const note = JSON.parse(noteContent);
       return (
         <div>
-          <h3 className="text-lg font-semibold mb-4">Technical Analysis Checklist</h3>
+          <h3 className="text-lg font-semibold mb-4">Technical Analysis</h3>
           <table className="table-auto w-full text-left border-collapse border border-gray-200 dark:border-gray-600">
             <tbody>
               <tr>
