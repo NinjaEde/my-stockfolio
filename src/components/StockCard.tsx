@@ -48,14 +48,14 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
     }
   };
 
-  const refreshNoteCount = async () => {
+  const refreshNoteCount = React.useCallback(async () => {
     const notes = await getNotes(stock.id);
     setNoteCount(notes.length);
-  };
+  }, [stock.id]);
 
   useEffect(() => {
     refreshNoteCount();
-  }, [stock.id]);
+  }, [stock.id, refreshNoteCount]);
 
   useEffect(() => {
     if (expandedDetails && activeTab === 'chart') {
@@ -108,7 +108,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         }
       };
     }
-  }, [expandedDetails, activeTab, stock.ticker_symbol]);
+  }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id]);
 
   useEffect(() => {
     if (expandedDetails && activeTab === 'overview') {
@@ -136,7 +136,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         }
       };
     }
-  }, [expandedDetails, activeTab, stock.ticker_symbol, tradingViewUrl]);
+  }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id, tradingViewUrl]);
 
   useEffect(() => {
     if (expandedDetails && activeTab === 'financials') {
@@ -162,7 +162,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         }
       };
     }
-  }, [expandedDetails, activeTab, stock.ticker_symbol, tradingViewUrl]);
+  }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id, tradingViewUrl]);
 
   return (
     <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500">
@@ -209,7 +209,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
             className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
           >
             {expandedDetails ? <ChevronUp size={18} className="mr-1" /> : <ChevronDown size={18} className="mr-1" />}
-            {expandedDetails ? 'Hide Details' : 'Show Details'}
+            Details
           </Button>
         </div>
       </CardHeader>

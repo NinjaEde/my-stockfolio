@@ -1,5 +1,6 @@
 import React from 'react';
 import { BarChart3, Sun, Moon } from 'lucide-react';
+import Button from './ui/Button';
 
 interface HeaderProps {
   darkMode: boolean;
@@ -8,7 +9,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ darkMode, setDarkMode }) => {
   return (
-    <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 shadow-md">
+    <header className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-violet-700 dark:to-violet-900 text-white py-6 shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -18,12 +19,12 @@ const Header: React.FC<HeaderProps> = ({ darkMode, setDarkMode }) => {
               <p className="text-blue-100 text-sm">Manage your investments with ease</p>
             </div>
           </div>
-          <button
+          <Button
             onClick={() => setDarkMode(!darkMode)}
-            className="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-md shadow hover:bg-gray-600 dark:bg-gray-500 dark:hover:bg-gray-400"
+            className="flex items-center gap-2 px-4 py-2 rounded-md shadow  dark:bg-gray-700 dark:text-white text-gray-700  dark:hover:bg-gray-600 bg-blue-600"
           >
             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+          </Button>
         </div>
       </div>
     </header>

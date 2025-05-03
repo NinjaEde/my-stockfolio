@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
-import { Trash2, ListChecks, PlusCircle, MinusCircle } from 'lucide-react';
+import { Trash2, ListChecks } from 'lucide-react';
 import Button from './ui/Button';
 import Textarea from './ui/Textarea';
 import Input from './ui/Input';
@@ -124,86 +124,86 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
           <table className="table-auto w-full text-left border-collapse border border-gray-200 dark:border-gray-600">
             <tbody>
               <tr>
-                <td colSpan={2} className="bg-gray-100 dark:bg-gray-700 font-bold px-4 py-2">
+                <td colSpan={2} className="table-header">
                   Moving Averages
                 </td>
               </tr>
               <tr>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                <td className="table-cell font-medium">
                   Above 10 MA
                 </td>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                <td className="table-cell">
                   {note.movingAverages.ma10 ? '✔' : '✘'}
                 </td>
               </tr>
               <tr>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                <td className="table-cell font-medium">
                   Above 50 MA
                 </td>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                <td className="table-cell">
                   {note.movingAverages.ma50 ? '✔' : '✘'}
                 </td>
               </tr>
               <tr>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                <td className="table-cell font-medium">
                   Above 150 MA
                 </td>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                <td className="table-cell">
                   {note.movingAverages.ma150 ? '✔' : '✘'}
                 </td>
               </tr>
               <tr>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                <td className="table-cell font-medium">
                   Above 200 MA
                 </td>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                <td className="table-cell">
                   {note.movingAverages.ma200 ? '✔' : '✘'}
                 </td>
               </tr>
 
               <tr>
-                <td colSpan={2} className="bg-gray-100 dark:bg-gray-700 font-bold px-4 py-2">
+                <td colSpan={2} className="table-header">
                   Volume
                 </td>
               </tr>
               <tr>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                <td className="table-cell font-medium">
                   Volume
                 </td>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                <td className="table-cell">
                   {note.volume}
                 </td>
               </tr>
 
               <tr>
-                <td colSpan={2} className="bg-gray-100 dark:bg-gray-700 font-bold px-4 py-2">
+                <td colSpan={2} className="table-header">
                   Price Levels
                 </td>
               </tr>
               <tr>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                <td className="table-cell font-medium">
                   Support
                 </td>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                <td className="table-cell">
                   {note.support} {currency}
                 </td>
               </tr>
               <tr>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                <td className="table-cell font-medium">
                   Resistance
                 </td>
-                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                <td className="table-cell">
                   {note.resistance} {currency}
                 </td>
               </tr>
 
               <tr>
-                <td colSpan={2} className="bg-gray-100 dark:bg-gray-700 font-bold px-4 py-2">
+                <td colSpan={2} className="table-header">
                   Additional Notes
                 </td>
               </tr>
               <tr>
-                <td colSpan={2} className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                <td colSpan={2} className="table-cell">
                   {note.additionalNotes}
                 </td>
               </tr>
@@ -304,7 +304,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
 
               <div>
                 <h4 className="font-medium">Price Levels</h4>
-                <div className="flex items-center gap-4">
+                <div className="flex items-end gap-4">
                   <Input
                     label="Support"
                     value={wizardData.support}
@@ -332,7 +332,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                   <select
                     value={currency}
                     onChange={handleCurrencyChange}
-                    className="p-2 border rounded-md dark:bg-gray-700 dark:text-white"
+                    className="p-1 border rounded-md dark:bg-gray-700 dark:text-white"
                   >
                     <option value="EUR">EUR</option>
                     <option value="USD">USD</option>
@@ -367,20 +367,20 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
         
         {loading ? (
           <div className="animate-pulse space-y-3">
-            <div className="h-24 bg-gray-100 rounded"></div>
-            <div className="h-24 bg-gray-100 rounded"></div>
+            <div className="h-24 bg-gray-100 rounded dark:bg-gray-800"></div>
+            <div className="h-24 bg-gray-100 rounded dark:bg-gray-800"></div>
           </div>
         ) : notes.length === 0 ? (
-          <p className="text-gray-500 italic">No notes yet</p>
+          <p className="text-gray-500 italic dark:text-gray-400">No notes yet</p>
         ) : (
           <div className="space-y-4">
             {notes.map((note) => (
               <div 
                 key={note.id} 
-                className="p-4 bg-gray-50 rounded-md border border-gray-100 dark:bg-gray-700 dark:border-gray-600"
+                className="p-4 bg-white rounded-md border border-gray-300 dark:bg-gray-900 dark:border-gray-700"
               >
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
                     {format(new Date(note.created_at), 'PPP p')}
                   </span>
                   
@@ -389,7 +389,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEditNote(note.id)}
-                      className="text-blue-500 hover:text-blue-700"
+                      className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                     >
                       Edit
                     </Button>
@@ -397,14 +397,14 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteNote(note.id)}
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                     >
                       <Trash2 size={16} />
                     </Button>
                   </div>
                 </div>
                 
-                <div className="prose prose-sm max-w-none">
+                <div className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200">
                   {renderNoteContent(note.content)}
                 </div>
               </div>
