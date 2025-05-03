@@ -3,6 +3,7 @@ import { getStocks } from '../services/stockService';
 import { Stock } from '../types';
 import StockCard from './StockCard';
 import Input from './ui/Input';
+import { Filter } from 'lucide-react';
 
 const StockList: React.FC = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
@@ -73,12 +74,15 @@ const StockList: React.FC = () => {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-400 mt-8 mb-4">Your Portfolio</h2>
       {stocks.length > 0 && (
-        <Input
-          placeholder="Search by ticker symbol or display name..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mb-4"
-        />
+        <div className="relative mb-4">
+          <Input
+            placeholder="Search by ticker symbol or display name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+        </div>
       )}
       {stocks.length === 0 ? (
         <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-md p-6 my-4 text-center">
