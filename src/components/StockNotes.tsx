@@ -4,6 +4,7 @@ import { Trash2, ListChecks } from 'lucide-react';
 import Button from './ui/Button';
 import Textarea from './ui/Textarea';
 import Input from './ui/Input';
+import Select from './ui/Select';
 import { getNotes, addNote, deleteNote, updateNote } from '../services/stockService';
 import { Note } from '../types';
 
@@ -294,7 +295,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                 <select
                   value={wizardData.volume}
                   onChange={(e) => setWizardData((prev) => ({ ...prev, volume: e.target.value }))}
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white"
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 border-gray-300"
                 >
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
@@ -329,14 +330,15 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                     onBlur={() => handleBlur('resistance')} // Format on blur
                     className="flex-1"
                   />
-                  <select
+                  <Select
+                    label="Currency"
                     value={currency}
                     onChange={handleCurrencyChange}
-                    className="p-1 border rounded-md dark:bg-gray-700 dark:text-white"
+                    className="flex-1"
                   >
                     <option value="EUR">EUR</option>
                     <option value="USD">USD</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
