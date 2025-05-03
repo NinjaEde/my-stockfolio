@@ -72,7 +72,7 @@ const StockList: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-400 mt-8 mb-4">Your Portfolio</h2>
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-400 mt-8 mb-4">My Portfolio</h2>
       {stocks.length > 0 && (
         <div className="relative mb-4">
           <Input

@@ -33,7 +33,7 @@ function App() {
           <AddStockForm onStockAdded={handleStockAdded} />
           <StockList key={refreshTrigger} />
         </main>
-        <footer className="bg-gray-800 dark:bg-gray-600 text-gray-300 py-6 mt-12">
+        <footer className="bg-blue-600 dark:bg-violet-900 text-gray-300 py-6 mt-12">
           <div className="container mx-auto px-4 text-center">
             <p className="text-sm">
               &copy; {new Date().getFullYear()} StockfolioPro. All rights reserved.
