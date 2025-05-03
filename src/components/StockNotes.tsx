@@ -120,24 +120,95 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
       const note = JSON.parse(noteContent);
       return (
         <div>
-          <h3>Technical Analysis Checklist</h3>
-          <ul>
-            <li>Moving Averages:</li>
-            <ul>
-              <li>{note.movingAverages.ma10 ? '✔' : '✘'} Above 10 MA</li>
-              <li>{note.movingAverages.ma50 ? '✔' : '✘'} Above 50 MA</li>
-              <li>{note.movingAverages.ma150 ? '✔' : '✘'} Above 150 MA</li>
-              <li>{note.movingAverages.ma200 ? '✔' : '✘'} Above 200 MA</li>
-            </ul>
-            <li>Volume: {note.volume}</li>
-            <li>Price Levels:</li>
-            <ul>
-              <li>Support: {note.support} {currency}</li>
-              <li>Resistance: {note.resistance} {currency}</li>
-            </ul>
-            <li>Additional Notes:</li>
-            <p>{note.additionalNotes}</p>
-          </ul>
+          <h3 className="text-lg font-semibold mb-4">Technical Analysis Checklist</h3>
+          <table className="table-auto w-full text-left border-collapse border border-gray-200 dark:border-gray-600">
+            <tbody>
+              <tr>
+                <td colSpan={2} className="bg-gray-100 dark:bg-gray-700 font-bold px-4 py-2">
+                  Moving Averages
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                  Above 10 MA
+                </td>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                  {note.movingAverages.ma10 ? '✔' : '✘'}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                  Above 50 MA
+                </td>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                  {note.movingAverages.ma50 ? '✔' : '✘'}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                  Above 150 MA
+                </td>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                  {note.movingAverages.ma150 ? '✔' : '✘'}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                  Above 200 MA
+                </td>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                  {note.movingAverages.ma200 ? '✔' : '✘'}
+                </td>
+              </tr>
+
+              <tr>
+                <td colSpan={2} className="bg-gray-100 dark:bg-gray-700 font-bold px-4 py-2">
+                  Volume
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                  Volume
+                </td>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                  {note.volume}
+                </td>
+              </tr>
+
+              <tr>
+                <td colSpan={2} className="bg-gray-100 dark:bg-gray-700 font-bold px-4 py-2">
+                  Price Levels
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                  Support
+                </td>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                  {note.support} {currency}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top font-medium">
+                  Resistance
+                </td>
+                <td className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                  {note.resistance} {currency}
+                </td>
+              </tr>
+
+              <tr>
+                <td colSpan={2} className="bg-gray-100 dark:bg-gray-700 font-bold px-4 py-2">
+                  Additional Notes
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={2} className="border border-gray-200 dark:border-gray-600 px-4 py-2 align-top">
+                  {note.additionalNotes}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       );
     } catch {
