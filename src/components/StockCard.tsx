@@ -10,10 +10,11 @@ import Input from './ui/Input';
 interface StockCardProps {
   stock: Stock;
   onDelete: () => void;
+  detailsOpen: boolean;
 }
 
-const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
-  const [expandedDetails, setExpandedDetails] = useState(false);
+const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) => {
+  const [expandedDetails, setExpandedDetails] = useState(detailsOpen);
   const [activeTab, setActiveTab] = useState<'overview' | 'trend' | 'chart' | 'notes' | 'financials'>('overview');
   const [isDeleting, setIsDeleting] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -42,6 +43,8 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
   const handleSave = async () => {
     try {
       await updateStock(stock.id, { ticker_symbol: tickerSymbol, display_name: displayName });
+      stock.ticker_symbol = tickerSymbol;
+      stock.display_name = displayName;
       setEditing(false);
     } catch (error) {
       console.error('Error updating stock:', error);
@@ -111,7 +114,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
   }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id]);
 
   useEffect(() => {
-    if (expandedDetails && activeTab === 'overview') {
+    if (expandedDetails && activeTab === 'overview') {      
       const script = document.createElement('script');
       script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
       script.async = true;
@@ -163,6 +166,10 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
       };
     }
   }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id, tradingViewUrl]);
+
+  useEffect(() => {
+    setExpandedDetails(detailsOpen);
+  }, [detailsOpen]);
 
   return (
     <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 flex flex-col">

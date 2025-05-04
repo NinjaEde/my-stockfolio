@@ -50,6 +50,18 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
     loadNotes();
   }, [loadNotes]);
 
+  useEffect(() => {
+    if (showWizard) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [showWizard]);
+
   const handleDeleteNote = async (noteId: string) => {
     if (window.confirm('Are you sure you want to delete this note?')) {
       try {
@@ -265,8 +277,8 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
       </div>
 
       {showWizard && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg"> {/* Increased width */}
+        <div className="fixed inset-0 bg-black/35 dark:bg-black/75 flex justify-center items-center z-50 h-dvh">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg">
             <h3 className="text-lg font-semibold mb-4">Technical Analysis Wizard</h3>
             <div className="space-y-4">
               <div>
