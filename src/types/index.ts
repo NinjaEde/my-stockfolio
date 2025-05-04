@@ -4,6 +4,7 @@ export interface Stock {
   display_name: string;
   chart_id: string;
   created_at: string;
+  is_interesting?: boolean;
 }
 
 export interface Note {

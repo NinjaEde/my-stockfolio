@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart4, Trash2, ChevronDown, ChevronUp, FileEdit } from 'lucide-react';
+import { BarChart4, Trash2, ChevronDown, ChevronUp, FileEdit, Bookmark } from 'lucide-react';
 import Card, { CardHeader, CardContent, CardFooter } from './ui/Card';
 import Button from './ui/Button';
 import { deleteStock, updateStock, getNotes } from '../services/stockService';
@@ -21,6 +21,16 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) =
   const [tickerSymbol, setTickerSymbol] = useState(stock.ticker_symbol);
   const [displayName, setDisplayName] = useState(stock.display_name);
   const [noteCount, setNoteCount] = useState(0);
+  const [isInteresting, setIsInteresting] = useState(stock.is_interesting || false);
+  const [bookmarkColor, setBookmarkColor] = useState('text-green-500');
+
+  const predefinedColors = [
+    { name: 'Green', text: 'text-green-500', bg: 'bg-green-500', border: 'border-green-500' },
+    { name: 'Purple', text: 'text-purple-500', bg: 'bg-purple-500', border: 'border-purple-500' },
+    { name: 'Blue', text: 'text-blue-500', bg: 'bg-blue-500', border: 'border-blue-500' },
+    { name: 'Yellow', text: 'text-yellow-500', bg: 'bg-yellow-500', border: 'border-yellow-500' },
+    { name: 'Red', text: 'text-red-500', bg: 'bg-red-500', border: 'border-red-500' },
+  ];
 
   const tradingViewUrl = `https://de.tradingview.com/chart/${stock.chart_id}?symbol=${stock.ticker_symbol}`;
 
@@ -49,6 +59,20 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) =
     } catch (error) {
       console.error('Error updating stock:', error);
     }
+  };
+
+  const handleToggleInteresting = async () => {
+    try {
+      const updatedStock = { ...stock, is_interesting: !isInteresting };
+      await updateStock(stock.id, updatedStock);
+      setIsInteresting(!isInteresting); 
+    } catch (error) {
+      console.error('Error updating stock:', error);
+    }
+  };
+
+  const handleColorChange = (color: string) => {
+    setBookmarkColor(color);
   };
 
   const refreshNoteCount = React.useCallback(async () => {
@@ -174,29 +198,56 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) =
   return (
     <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 flex flex-col">
       <CardHeader className="flex justify-between items-center">
-        <div className="flex flex-col">
-          {editing ? (
-            <div className="space-y-2 flex items-start space-x-2">
-              <Input
-                placeholder="Ticker Symbol"
-                value={tickerSymbol}
-                onChange={(e) => setTickerSymbol(e.target.value)}
-                required
-              />
-              <Input
-                placeholder="Display Name"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                required
-              />
-              <Button size="sm" onClick={handleSave}>Save</Button>
+        <div className="flex items-center space-x-2">
+          <div className="relative group">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleToggleInteresting}
+              className={`flex items-center ${isInteresting ? '' : 'text-gray-700 dark:text-gray-300'} hover:${bookmarkColor}`}
+            >
+              <Bookmark size={16} className={`mr-1 ${isInteresting ? bookmarkColor : ''}`} fill={isInteresting ? 'currentColor' : 'none'} />
+            </Button>
+            <div className="absolute top-full mt-2 left-0 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              {predefinedColors.map((color) => (
+                <button
+                  key={color.name}
+                  onClick={() => {
+                    handleColorChange(color.text);
+                    setIsInteresting(true);
+                  }}
+                  className={`w-4 h-4 rounded-full ${color.border} ${color.bg} ${
+                    bookmarkColor === color.text ? 'ring-1 ring-offset-1 ring-gray-400' : ''
+                  }`}
+                  title={`Select ${color.name}`}
+                />
+              ))}
             </div>
-          ) : (
-            <>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{stock.display_name}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-300">{stock.ticker_symbol}</p>
-            </>
-          )}
+          </div>
+          <div className="flex flex-col">
+            {editing ? (
+              <div className="space-y-2 flex items-start space-x-2">
+                <Input
+                  placeholder="Ticker Symbol"
+                  value={tickerSymbol}
+                  onChange={(e) => setTickerSymbol(e.target.value)}
+                  required
+                />
+                <Input
+                  placeholder="Display Name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  required
+                />
+                <Button size="sm" onClick={handleSave}>Save</Button>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{stock.display_name}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-300">{stock.ticker_symbol}</p>
+              </>
+            )}
+          </div>
         </div>
         <div className="flex items-center space-x-2">
           <Button
