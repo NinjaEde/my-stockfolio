@@ -364,8 +364,8 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
         </div>
       )}
 
-      <div>
-        <h4 className="text-md font-medium text-gray-800 mb-2">History</h4>
+      <div className='max-h-[350px] overflow-y-auto'>
+        <h4 className="text-md font-medium text-gray-800 dark:text-gray-400 mb-2">History</h4>
         
         {loading ? (
           <div className="animate-pulse space-y-3">

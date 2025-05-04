@@ -29,7 +29,7 @@ function App() {
     <div>
       <div className="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white min-h-screen flex flex-col">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="container mx-auto px-4 py-8 max-w-4xl flex-grow">
+        <main className="container mx-auto px-4 py-8 max-w-8xl flex-grow">
           <AddStockForm onStockAdded={handleStockAdded} />
           <StockList key={refreshTrigger} />
         </main>

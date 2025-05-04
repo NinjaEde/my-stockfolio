@@ -72,6 +72,7 @@ const StockList: React.FC = () => {
 
   return (
     <div className="space-y-4">
+      <div className='flex justify-between items-center mb-4'>
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-400 mt-8 mb-4">My Portfolio</h2>
       {stocks.length > 0 && (
         <div className="relative mb-4">
@@ -79,11 +80,12 @@ const StockList: React.FC = () => {
             placeholder="Search by ticker symbol or display name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-10 w-md"
           />
           <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-        </div>
+        </div>       
       )}
+       </div>
       {stocks.length === 0 ? (
         <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-md p-6 my-4 text-center">
           <p className="text-lg">No stocks added yet. Add your first stock above!</p>
@@ -93,7 +95,7 @@ const StockList: React.FC = () => {
           <p className="text-lg">No stocks match your search. Try a different query.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredStocks.map((stock) => (
             <StockCard 
               key={stock.id} 

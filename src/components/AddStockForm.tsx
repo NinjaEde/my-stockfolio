@@ -49,13 +49,16 @@ const AddStockForm: React.FC<AddStockFormProps> = ({ onStockAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200">
+    <form 
+      onSubmit={handleSubmit} 
+      className="space-y-4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 w-full sm:w-full lg:w-1/3 "
+    >
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-300 flex items-center">
         <PlusCircle className="w-5 h-5 mr-2 text-blue-600" />
         Add New Stock
       </h2>
       
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col gap-4 w-full">
         <Input
           label="Ticker Symbol"
           placeholder="e.g., AAPL"

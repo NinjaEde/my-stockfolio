@@ -165,7 +165,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
   }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id, tradingViewUrl]);
 
   return (
-    <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500">
+    <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 flex flex-col">
       <CardHeader className="flex justify-between items-center">
         <div className="flex flex-col">
           {editing ? (
@@ -215,7 +215,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
       </CardHeader>
 
       {expandedDetails && (
-        <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-6">
+        <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-6 flex-grow">
           <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-600 pb-2">
             <button
               className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'overview' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
@@ -281,7 +281,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete }) => {
         </CardContent>
       )}
 
-      <CardFooter className="flex justify-between items-center dark:bg-gray-700">
+      <CardFooter className="flex justify-between items-center dark:bg-gray-700 mt-auto">
         <p className="text-xs text-gray-500 dark:text-gray-300">
           Added on {new Date(stock.created_at).toLocaleDateString()}
         </p>
