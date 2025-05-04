@@ -7,6 +7,8 @@ StockfolioPro is a web application for managing your stock portfolio. It allows 
 ## Features
 
 - Add and manage stocks in your portfolio
+- Edit stock details (ticker symbol and display name)
+- Bookmark stocks with customizable colors
 - View interactive TradingView charts for each stock
 - Add detailed notes with full Markdown support
 - Technical analysis checklist templates
@@ -35,12 +37,14 @@ StockfolioPro is a web application for managing your stock portfolio. It allows 
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/stockfolio.git
    cd stockfolio
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    # or
@@ -48,12 +52,14 @@ StockfolioPro is a web application for managing your stock portfolio. It allows 
    ```
 
 3. Create a `.env` file in the project root with your Supabase credentials:
-   ```
+
+   ```bash
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
 4. Start the development server:
+
    ```bash
    npm run dev
    # or
@@ -64,7 +70,7 @@ StockfolioPro is a web application for managing your stock portfolio. It allows 
 
 ## Project Structure
 
-```
+```bash
 stockfolio/
 ├── public/              # Static assets
 ├── src/
