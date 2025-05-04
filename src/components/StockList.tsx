@@ -3,7 +3,7 @@ import { getStocks } from '../services/stockService';
 import { Stock } from '../types';
 import StockCard from './StockCard';
 import Input from './ui/Input';
-import { Filter } from 'lucide-react';
+import { Filter, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
 import Button from './ui/Button';
 
 const StockList: React.FC = () => {
@@ -92,10 +92,11 @@ const StockList: React.FC = () => {
               <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
             </div>
             <Button
+              variant="outline"
               onClick={toggleDetails}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              title={detailsOpen ? "Collapse all stock details" : "Expand all stock details"}
             >
-              {detailsOpen ? 'Close All' : 'Open All'}
+              {detailsOpen ? <ChevronsDownUp size={16} /> : <ChevronsUpDown size={16} />}
             </Button>
           </div>
         )}
