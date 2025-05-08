@@ -72,6 +72,10 @@ const StockList: React.FC = () => {
     loadStocks();
   };
 
+  const handleStockUpdated = () => {
+    loadStocks();
+  };
+
   const toggleDetails = () => {
     setDetailsOpen((prev) => !prev);
   };
@@ -94,7 +98,7 @@ const StockList: React.FC = () => {
               placeholder="Search by ticker symbol or display name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 w-md"
+              className="pl-10 w-md py-2"
             />
             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
           </div>
@@ -169,6 +173,7 @@ const StockList: React.FC = () => {
                         key={stock.id}
                         stock={stock}
                         onDelete={handleStockDeleted}
+                        onUpdate={handleStockUpdated}
                         detailsOpen={detailsOpen}
                       />
                     ))}
@@ -183,6 +188,7 @@ const StockList: React.FC = () => {
               key={stock.id} 
               stock={stock} 
               onDelete={handleStockDeleted} 
+              onUpdate={handleStockUpdated}
               detailsOpen={detailsOpen} 
             />
           ))}

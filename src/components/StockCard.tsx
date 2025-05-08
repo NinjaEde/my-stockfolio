@@ -11,9 +11,10 @@ interface StockCardProps {
   stock: Stock;
   onDelete: () => void;
   detailsOpen: boolean;
+  onUpdate?: () => void;
 }
 
-const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) => {
+const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onUpdate }) => {
   const [expandedDetails, setExpandedDetails] = useState(detailsOpen);
   const [activeTab, setActiveTab] = useState<'overview' | 'trend' | 'chart' | 'notes' | 'financials'>('overview');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -76,6 +77,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) =
     try {
       await updateStock(stock.id, { bookmark_color: color, is_interesting: true });
       setIsInteresting(true);
+      onUpdate?.();
     } catch (error) {
       console.error('Error updating bookmark color:', error);
     }
