@@ -31,7 +31,9 @@ export const addStock = async (ticker_symbol: string, display_name: string): Pro
       ticker_symbol,
       display_name,
       chart_id: "Qkb0J0s0",
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      is_interesting: false,
+      bookmark_color: 'text-green-500'
     };
     
     const stocks = getStoredStocks();
@@ -143,5 +145,43 @@ export const updateNote = async (id: string, content: string): Promise<boolean> 
   } catch (error) {
     console.error('Error updating note:', error);
     return false;
+  }
+};
+
+// Get only bookmarked stocks
+export const getBookmarkedStocks = async (): Promise<Stock[]> => {
+  try {
+    const stocks = getStoredStocks();
+    return stocks.filter(stock => stock.is_interesting);
+  } catch (error) {
+    console.error('Error fetching bookmarked stocks:', error);
+    return [];
+  }
+};
+
+// Get stocks filtered by bookmark color
+export const getStocksByBookmarkColor = async (color: string): Promise<Stock[]> => {
+  try {
+    const stocks = getStoredStocks();
+    return stocks.filter(stock => stock.bookmark_color === color);
+  } catch (error) {
+    console.error('Error filtering stocks by bookmark color:', error);
+    return [];
+  }
+};
+
+// Group stocks by bookmark color
+export const groupStocksByBookmarkColor = async (): Promise<Record<string, Stock[]>> => {
+  try {
+    const stocks = getStoredStocks();
+    return stocks.reduce((groups: Record<string, Stock[]>, stock) => {
+      const color = stock.bookmark_color || 'none';
+      if (!groups[color]) groups[color] = [];
+      groups[color].push(stock);
+      return groups;
+    }, {});
+  } catch (error) {
+    console.error('Error grouping stocks by bookmark color:', error);
+    return {};
   }
 };

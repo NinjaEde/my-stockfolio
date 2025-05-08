@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { getStocks } from '../services/stockService';
+import { getStocks, getStocksByBookmarkColor, groupStocksByBookmarkColor } from '../services/stockService';
 import { Stock } from '../types';
 import StockCard from './StockCard';
 import Input from './ui/Input';
-import { Filter, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
+import { Filter, ChevronsDownUp, ChevronsUpDown, Layers, Tag, LoaderCircle } from 'lucide-react';
 import Button from './ui/Button';
+
+const BOOKMARK_COLORS = [
+  { name: 'All', value: '' },
+  { name: 'Green', value: 'text-green-500' },
+  { name: 'Purple', value: 'text-purple-500' },
+  { name: 'Blue', value: 'text-blue-500' },
+  { name: 'Yellow', value: 'text-yellow-500' },
+  { name: 'Red', value: 'text-red-500' },
+];
 
 const StockList: React.FC = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
@@ -13,14 +22,28 @@ const StockList: React.FC = () => {
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [filterColor, setFilterColor] = useState('');
+  const [groupByColor, setGroupByColor] = useState(false);
+  const [groupedStocks, setGroupedStocks] = useState<Record<string, Stock[]>>({});
 
   const loadStocks = async () => {
     setLoading(true);
     try {
-      const stocksData = await getStocks();
+      let stocksData: Stock[];
+      if (filterColor) {
+        stocksData = await getStocksByBookmarkColor(filterColor);
+      } else {
+        stocksData = await getStocks();
+      }
       setStocks(stocksData);
       setFilteredStocks(stocksData);
       setError('');
+      if (groupByColor) {
+        const grouped = await groupStocksByBookmarkColor();
+        setGroupedStocks(grouped);
+      } else {
+        setGroupedStocks({});
+      }
     } catch (err) {
       console.error('Error loading stocks:', err);
       setError('Failed to load stocks. Please try again.');
@@ -31,7 +54,8 @@ const StockList: React.FC = () => {
 
   useEffect(() => {
     loadStocks();
-  }, []);
+    // eslint-disable-next-line
+  }, [filterColor, groupByColor]);
 
   useEffect(() => {
     const query = searchQuery.toLowerCase();
@@ -51,63 +75,105 @@ const StockList: React.FC = () => {
     setDetailsOpen((prev) => !prev);
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-pulse flex space-x-4">
-          <div className="rounded-full bg-gray-200 h-12 w-12"></div>
-          <div className="flex-1 space-y-4 py-1">
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleColorFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterColor(e.target.value);
+  };
 
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 my-4">
-        <p>{error}</p>
-      </div>
-    );
-  }
+  const handleGroupByColor = () => {
+    setGroupByColor((prev) => !prev);
+  };
 
   return (
     <div className="space-y-4">
-      <div className='flex justify-between items-center mb-4'>
+      <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-2'>
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-400 mt-8 mb-4">My Portfolio</h2>
-        {stocks.length > 0 && (
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Input
-                placeholder="Search by ticker symbol or display name..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 w-md"
-              />
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-            </div>
-            <Button
-              variant="outline"
-              onClick={toggleDetails}
-              title={detailsOpen ? "Collapse all stock details" : "Expand all stock details"}
-            >
-              {detailsOpen ? <ChevronsDownUp size={16} /> : <ChevronsUpDown size={16} />}
-            </Button>
+        <div className="flex flex-wrap items-center space-x-2 md:space-x-4">
+          <div className="relative">
+            <Input
+              placeholder="Search by ticker symbol or display name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 w-md"
+            />
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
           </div>
-        )}
+          <select
+            value={filterColor}
+            onChange={handleColorFilterChange}
+            className="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 dark:text-gray-200"
+            title="Filter by bookmark color"
+          >
+            {BOOKMARK_COLORS.map((color) => (
+              <option key={color.value} value={color.value}>
+                {color.name}
+              </option>
+            ))}
+          </select>
+          <Button
+            variant={groupByColor ? "primary" : "outline"}
+            onClick={handleGroupByColor}
+            title="Group by bookmark color"
+            className="flex items-center"
+          >
+            <Layers size={16} className="mr-1" />
+            {groupByColor ? "Ungroup" : "Group by color"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={toggleDetails}
+            title={detailsOpen ? "Collapse all stock details" : "Expand all stock details"}
+          >
+            {detailsOpen ? <ChevronsDownUp size={16} /> : <ChevronsUpDown size={16} />}
+          </Button>
+        </div>
       </div>
-      {stocks.length === 0 ? (
+      {loading ? (
+        <div className="flex justify-center items-center py-8">
+          <LoaderCircle className="animate-spin text-gray-400" size={40} />
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 my-4">
+          <p>{error}</p>
+        </div>
+      ) : stocks.length === 0 ? (
         <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-md p-6 my-4 text-center">
           <p className="text-lg">No stocks added yet. Add your first stock above!</p>
         </div>
       ) : filteredStocks.length === 0 ? (
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-md p-6 my-4 text-center">
-          <p className="text-lg">No stocks match your search. Try a different query.</p>
+        <>
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-md p-6 my-4 text-center">
+            <p className="text-lg">No stocks match your search or filter. Try a different query or color.</p>
+          </div>
+        </>
+      ) : groupByColor ? (
+        <div className="space-y-8">
+          {Object.entries(groupedStocks)
+            .filter(([color]) => !filterColor || color === filterColor)
+            .map(([color, stocksInGroup]) => (
+              <div key={color}>
+                <div className="flex items-center mb-2">
+                  <Tag className={`${color} mr-2`} size={18} />
+                  <span className={`font-semibold ${color}`}>{BOOKMARK_COLORS.find(c => c.value === color)?.name || color}</span>
+                  <span className="ml-2 text-xs text-gray-400">({stocksInGroup.length})</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {stocksInGroup
+                    .filter(
+                      (stock) =>
+                        stock.ticker_symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        stock.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map((stock) => (
+                      <StockCard
+                        key={stock.id}
+                        stock={stock}
+                        onDelete={handleStockDeleted}
+                        detailsOpen={detailsOpen}
+                      />
+                    ))}
+                </div>
+              </div>
+            ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

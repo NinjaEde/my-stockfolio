@@ -22,7 +22,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) =
   const [displayName, setDisplayName] = useState(stock.display_name);
   const [noteCount, setNoteCount] = useState(0);
   const [isInteresting, setIsInteresting] = useState(stock.is_interesting || false);
-  const [bookmarkColor, setBookmarkColor] = useState('text-green-500');
+  const [bookmarkColor, setBookmarkColor] = useState(stock.bookmark_color || 'text-green-500');
 
   const predefinedColors = [
     { name: 'Green', text: 'text-green-500', bg: 'bg-green-500', border: 'border-green-500' },
@@ -71,8 +71,14 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) =
     }
   };
 
-  const handleColorChange = (color: string) => {
+  const handleColorChange = async (color: string) => {
     setBookmarkColor(color);
+    try {
+      await updateStock(stock.id, { bookmark_color: color, is_interesting: true });
+      setIsInteresting(true);
+    } catch (error) {
+      console.error('Error updating bookmark color:', error);
+    }
   };
 
   const refreshNoteCount = React.useCallback(async () => {
@@ -195,6 +201,11 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) =
     setExpandedDetails(detailsOpen);
   }, [detailsOpen]);
 
+  useEffect(() => {
+    setIsInteresting(stock.is_interesting || false);
+    setBookmarkColor(stock.bookmark_color || 'text-green-500');
+  }, [stock.is_interesting, stock.bookmark_color]);
+
   return (
     <Card className="transition-all duration-300 ease-in-out hover:shadow-md bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 flex flex-col">
       <CardHeader className="flex justify-between items-center">
@@ -212,10 +223,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen }) =
               {predefinedColors.map((color) => (
                 <button
                   key={color.name}
-                  onClick={() => {
-                    handleColorChange(color.text);
-                    setIsInteresting(true);
-                  }}
+                  onClick={() => handleColorChange(color.text)}
                   className={`w-4 h-4 rounded-full ${color.border} ${color.bg} ${
                     bookmarkColor === color.text ? 'ring-1 ring-offset-1 ring-gray-400' : ''
                   }`}
