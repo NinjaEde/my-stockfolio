@@ -5,6 +5,7 @@ export interface Stock {
   chart_id: string;
   created_at: string;
   is_interesting?: boolean;
+  bookmark_color?: string;
 }
 
 export interface Note {

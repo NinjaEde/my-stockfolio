@@ -5,14 +5,15 @@ import StockCard from './StockCard';
 import Input from './ui/Input';
 import { Filter, ChevronsDownUp, ChevronsUpDown, Layers, Tag, LoaderCircle } from 'lucide-react';
 import Button from './ui/Button';
+import CustomSelect from './ui/CustomSelect';
 
 const BOOKMARK_COLORS = [
-  { name: 'All', value: '' },
-  { name: 'Green', value: 'text-green-500' },
-  { name: 'Purple', value: 'text-purple-500' },
-  { name: 'Blue', value: 'text-blue-500' },
-  { name: 'Yellow', value: 'text-yellow-500' },
-  { name: 'Red', value: 'text-red-500' },
+  { name: 'All', value: '', color: 'transparent' }, 
+  { name: 'Green', value: 'text-green-500', color: '#22c55e' },
+  { name: 'Purple', value: 'text-purple-500', color: '#a21caf' },
+  { name: 'Blue', value: 'text-blue-500', color: '#2563eb' },
+  { name: 'Yellow', value: 'text-yellow-500', color: '#eab308' },
+  { name: 'Red', value: 'text-red-500', color: '#ef4444' },
 ];
 
 const StockList: React.FC = () => {
@@ -75,8 +76,8 @@ const StockList: React.FC = () => {
     setDetailsOpen((prev) => !prev);
   };
 
-  const handleColorFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilterColor(e.target.value);
+  const handleColorFilterChange = (colorValue: string) => {
+    setFilterColor(colorValue);
   };
 
   const handleGroupByColor = () => {
@@ -97,18 +98,18 @@ const StockList: React.FC = () => {
             />
             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
           </div>
-          <select
-            value={filterColor}
-            onChange={handleColorFilterChange}
-            className="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 dark:text-gray-200"
-            title="Filter by bookmark color"
-          >
-            {BOOKMARK_COLORS.map((color) => (
-              <option key={color.value} value={color.value}>
-                {color.name}
-              </option>
-            ))}
-          </select>
+          <div className="min-w-[160px]">
+            <CustomSelect
+              options={BOOKMARK_COLORS.map(c => ({
+                label: c.name,
+                value: c.value,
+                color: c.color,
+              }))}
+              value={filterColor}
+              onChange={handleColorFilterChange}
+              className="w-full"
+            />
+          </div>
           <Button
             variant={groupByColor ? "primary" : "outline"}
             onClick={handleGroupByColor}
