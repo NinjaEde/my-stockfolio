@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      - USE_MONGO_DB=true
+      - MONGO_URI=mongodb://mongo:27017/stockfolio
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:5.0
+    container_name: stockfolio-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
