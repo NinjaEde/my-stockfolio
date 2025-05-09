@@ -369,7 +369,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                 Cancel
               </Button>
               <Button onClick={handleWizardSubmit} disabled={adding}>
-                {adding ? 'Saving...' : editingNoteId ? 'Update' : 'Insert'}
+                {adding ? 'Saving...' : editingNoteId ? 'Update' : 'Add Note'}
               </Button>
             </div>
           </div>
