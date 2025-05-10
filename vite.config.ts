@@ -6,8 +6,11 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [tailwindcss(), react()],
   optimizeDeps: {
-    // entferne das Exclude oder benutze Include, damit lucide-react vorab gebundlet wird
-    // exclude: ['lucide-react'],  
     include: ['lucide-react'],
+  },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:4000',
+    },
   },
 });

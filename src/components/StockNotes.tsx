@@ -5,7 +5,7 @@ import Button from './ui/Button';
 import Textarea from './ui/Textarea';
 import Input from './ui/Input';
 import Select from './ui/Select';
-import { getNotes, addNote, deleteNote, updateNote } from '../services/stockService';
+import { getNotes, addNote, deleteNote, updateNote } from '../services/noteService';
 import { Note } from '../types';
 
 interface StockNotesProps {

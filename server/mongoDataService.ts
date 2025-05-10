@@ -1,4 +1,4 @@
-import type { Stock } from '../types';
+import type { Stock } from '../src/types';
 
 const API_BASE = '/api';
 
