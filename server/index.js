@@ -43,7 +43,7 @@ app.post('/api/stocks', async (req, res) => {
 app.delete('/api/stocks/:id', async (req, res) => {
     try {
         const collection = await getCollection('stocks');
-        await collection.deleteOne({ id: req.params.id });
+        await collection.deleteOne({ ticker_symbol: req.params.id });
         res.status(204).end();
     } catch (err) {
         res.status(500).json({ error: 'Failed to delete stock' });
@@ -54,7 +54,7 @@ app.put('/api/stocks/:id', async (req, res) => {
     try {
         const updates = req.body;
         const collection = await getCollection('stocks');
-        await collection.updateOne({ id: req.params.id }, { $set: updates });
+        await collection.updateOne({ ticker_symbol: req.params.id }, { $set: updates });
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Failed to update stock' });
@@ -78,6 +78,10 @@ app.get('/api/notes/:stock_id', async (req, res) => {
 app.post('/api/notes', async (req, res) => {
     try {
         const note = req.body;
+        if (!note.id) {
+            note.id = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+        }
+        note.created_at = note.created_at || new Date().toISOString();
         const collection = await getCollection('notes');
         await collection.insertOne(note);
         res.status(201).json(note);

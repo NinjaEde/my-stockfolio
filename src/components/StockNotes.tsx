@@ -395,7 +395,9 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-xs text-gray-600 dark:text-gray-400">
-                    {format(new Date(note.created_at), 'PPP p')}
+                    {note.created_at && !isNaN(Date.parse(note.created_at))
+                      ? format(new Date(note.created_at), 'PPP p')
+                      : 'N/A'}
                   </span>
                   
                   <div className="flex space-x-2">
