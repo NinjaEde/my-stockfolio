@@ -3,18 +3,15 @@ services:
     build:
       context: .
     ports:
-      - "3000:3000"
+      - "3033:80"
     container_name: stockfolio-app
     restart: unless-stopped
     environment:
       - USE_MONGO_DB=true
-      - MONGO_URI=mongodb://mongo:27017/stockfolio
     # env_file:
     #  - .env
     networks:
       - stockfolio-network
-    depends_on:
-      - stockfolio-mongo
 
   mongo:
     image: mongo:8.0
@@ -31,6 +28,19 @@ services:
       retries: 3
     networks:
       - stockfolio-network
+
+  api:
+    build:
+      context: ./server
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/stockfolio
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+    networks:
+      - stockfolio-network
+      
 
 volumes:
   mongo-data:

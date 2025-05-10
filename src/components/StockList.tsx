@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getStocks, getStocksByBookmarkColor, groupStocksByBookmarkColor } from '../services/stockService';
+import { getStocks } from '../services/stockService';
+import { getStocksByBookmarkColor, groupStocksByBookmarkColor } from '../services/bookmarkService';
 import { Stock } from '../types';
 import StockCard from './StockCard';
 import Input from './ui/Input';
@@ -32,7 +33,7 @@ const StockList: React.FC = () => {
     try {
       let stocksData: Stock[];
       if (filterColor) {
-        stocksData = await getStocksByBookmarkColor(filterColor);
+        stocksData = await getStocksByBookmarkColor(getStocks, filterColor);
       } else {
         stocksData = await getStocks();
       }
@@ -40,7 +41,7 @@ const StockList: React.FC = () => {
       setFilteredStocks(stocksData);
       setError('');
       if (groupByColor) {
-        const grouped = await groupStocksByBookmarkColor();
+        const grouped = await groupStocksByBookmarkColor(getStocks);
         setGroupedStocks(grouped);
       } else {
         setGroupedStocks({});

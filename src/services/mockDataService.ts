@@ -35,11 +35,11 @@ export const addStock = async (ticker_symbol: string, display_name: string): Pro
       is_interesting: false,
       bookmark_color: 'text-green-500'
     };
-    
+
     const stocks = getStoredStocks();
     stocks.push(newStock);
     setStoredStocks(stocks);
-    
+
     return newStock;
   } catch (error) {
     console.error('Error adding stock:', error);
@@ -62,12 +62,12 @@ export const deleteStock = async (id: string): Promise<boolean> => {
     const notes = getStoredNotes();
     const filteredNotes = notes.filter(note => note.stock_id !== id);
     setStoredNotes(filteredNotes);
-    
+
     // Delete stock
     const stocks = getStoredStocks();
     const filteredStocks = stocks.filter(stock => stock.id !== id);
     setStoredStocks(filteredStocks);
-    
+
     return true;
   } catch (error) {
     console.error('Error deleting stock:', error);
@@ -83,11 +83,11 @@ export const addNote = async (stock_id: string, content: string): Promise<Note |
       content,
       created_at: new Date().toISOString()
     };
-    
+
     const notes = getStoredNotes();
     notes.push(newNote);
     setStoredNotes(notes);
-    
+
     return newNote;
   } catch (error) {
     console.error('Error adding note:', error);
@@ -145,43 +145,5 @@ export const updateNote = async (id: string, content: string): Promise<boolean> 
   } catch (error) {
     console.error('Error updating note:', error);
     return false;
-  }
-};
-
-// Get only bookmarked stocks
-export const getBookmarkedStocks = async (): Promise<Stock[]> => {
-  try {
-    const stocks = getStoredStocks();
-    return stocks.filter(stock => stock.is_interesting);
-  } catch (error) {
-    console.error('Error fetching bookmarked stocks:', error);
-    return [];
-  }
-};
-
-// Get stocks filtered by bookmark color
-export const getStocksByBookmarkColor = async (color: string): Promise<Stock[]> => {
-  try {
-    const stocks = getStoredStocks();
-    return stocks.filter(stock => stock.bookmark_color === color);
-  } catch (error) {
-    console.error('Error filtering stocks by bookmark color:', error);
-    return [];
-  }
-};
-
-// Group stocks by bookmark color
-export const groupStocksByBookmarkColor = async (): Promise<Record<string, Stock[]>> => {
-  try {
-    const stocks = getStoredStocks();
-    return stocks.reduce((groups: Record<string, Stock[]>, stock) => {
-      const color = stock.bookmark_color || 'none';
-      if (!groups[color]) groups[color] = [];
-      groups[color].push(stock);
-      return groups;
-    }, {});
-  } catch (error) {
-    console.error('Error grouping stocks by bookmark color:', error);
-    return {};
   }
 };
