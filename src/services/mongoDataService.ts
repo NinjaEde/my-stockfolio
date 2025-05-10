@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 import { Stock, Note } from '../types';
 
-const uri = process.env.MONGO_URI || 'your-mongodb-uri';
+const uri = process.env.MONGO_URI || 'mongodb://mongo:27017/stockfolio';
 const client = new MongoClient(uri);
 const dbName = 'stockfolio';
 const stocksCollection = 'stocks';
@@ -13,7 +13,7 @@ const getCollection = async (collectionName: string) => {
 };
 
 // MongoDB service functions
-export const addStockToMongo = async (stock: Stock): Promise<Stock | null> => {
+export const addStock = async (stock: Stock): Promise<Stock | null> => {
   try {
     const collection = await getCollection(stocksCollection);
     await collection.insertOne(stock);
@@ -24,7 +24,7 @@ export const addStockToMongo = async (stock: Stock): Promise<Stock | null> => {
   }
 };
 
-export const getStocksFromMongo = async (): Promise<Stock[]> => {
+export const getStocks = async (): Promise<Stock[]> => {
   try {
     const collection = await getCollection(stocksCollection);
     const docs = await collection.find().toArray();
@@ -41,7 +41,7 @@ export const getStocksFromMongo = async (): Promise<Stock[]> => {
   }
 };
 
-export const deleteStockFromMongo = async (id: string): Promise<boolean> => {
+export const deleteStock = async (id: string): Promise<boolean> => {
   try {
     const collection = await getCollection(stocksCollection);
     await collection.deleteOne({ id });
@@ -56,7 +56,7 @@ export const deleteStockFromMongo = async (id: string): Promise<boolean> => {
   }
 };
 
-export const addNoteToMongo = async (note: Note): Promise<Note | null> => {
+export const addNote = async (note: Note): Promise<Note | null> => {
   try {
     const collection = await getCollection(notesCollection);
     await collection.insertOne(note);
@@ -67,7 +67,7 @@ export const addNoteToMongo = async (note: Note): Promise<Note | null> => {
   }
 };
 
-export const getNotesFromMongo = async (stock_id: string): Promise<Note[]> => {
+export const getNotes = async (stock_id: string): Promise<Note[]> => {
   try {
     const collection = await getCollection(notesCollection);
     const docs = await collection.find({ stock_id }).sort({ created_at: -1 }).toArray();
@@ -83,7 +83,7 @@ export const getNotesFromMongo = async (stock_id: string): Promise<Note[]> => {
   }
 };
 
-export const deleteNoteFromMongo = async (id: string): Promise<boolean> => {
+export const deleteNote = async (id: string): Promise<boolean> => {
   try {
     const collection = await getCollection(notesCollection);
     await collection.deleteOne({ id });
