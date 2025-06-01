@@ -123,7 +123,7 @@ const NoteWizard: React.FC<NoteWizardProps> = ({
           <div className="flex items-end gap-4">
             <Input
               label="Support"
-              type='number'
+              type="number"
               value={wizardData.support}
               onChange={(e) =>
                 setWizardData((prev: any) => ({
@@ -131,11 +131,20 @@ const NoteWizard: React.FC<NoteWizardProps> = ({
                   support: e.target.value,
                 }))
               }
+              onBlur={(e) => {
+                const value = parseFloat(e.target.value);
+                if (!isNaN(value)) {
+                  setWizardData((prev: any) => ({
+                    ...prev,
+                    support: value.toFixed(2),
+                  }));
+                }
+              }}
               className="flex-1 text-right"
             />
             <Input
               label="Resistance"
-              type='number'
+              type="number"
               value={wizardData.resistance}
               onChange={(e) =>
                 setWizardData((prev: any) => ({
@@ -143,6 +152,15 @@ const NoteWizard: React.FC<NoteWizardProps> = ({
                   resistance: e.target.value,
                 }))
               }
+              onBlur={(e) => {
+                const value = parseFloat(e.target.value);
+                if (!isNaN(value)) {
+                  setWizardData((prev: any) => ({
+                    ...prev,
+                    resistance: value.toFixed(2),
+                  }));
+                }
+              }}
               className="flex-1 text-right"
             />
             <Select
