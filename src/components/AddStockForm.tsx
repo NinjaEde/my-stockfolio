@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { PlusCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import Input from './ui/Input';
 import Button from './ui/Button';
@@ -14,6 +14,7 @@ const AddStockForm: React.FC<AddStockFormProps> = ({ onStockAdded }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const tickerInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ const AddStockForm: React.FC<AddStockFormProps> = ({ onStockAdded }) => {
         setTicker('');
         setDisplayName('');
         onStockAdded();
+        tickerInputRef.current?.focus();
       } else {
         setError('Failed to add stock. Please try again.');
       }
@@ -78,9 +80,10 @@ const AddStockForm: React.FC<AddStockFormProps> = ({ onStockAdded }) => {
               label="Ticker Symbol"
               placeholder="e.g., AAPL"
               value={ticker}
-              onChange={(e) => setTicker(e.target.value)}
+              onChange={(e) => setTicker(e.target.value.toUpperCase())}
               className="flex-1"
               required
+              ref={tickerInputRef}
             />
             
             <Input

@@ -14,3 +14,8 @@ export interface Note {
   content: string;
   created_at: string;
 }
+
+export interface User {
+  username: string;
+  password: string;
+}

@@ -1,10 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import { MongoClient } from 'mongodb';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/stockfolio';
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
 app.use(cors());
 app.use(express.json());
@@ -108,6 +111,51 @@ app.put('/api/notes/:id', async (req, res) => {
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Failed to update note' });
+    }
+});
+
+
+// --- AUTH ROUTES ---
+
+app.post('/api/register', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username and password required' });
+        }
+        const collection = await getCollection('users');
+        const existing = await collection.findOne({ username });
+        if (existing) {
+            return res.status(409).json({ error: 'Username already exists' });
+        }
+        const hashed = await bcrypt.hash(password, 10);
+        const user = { username, password: hashed };
+        await collection.insertOne(user);
+        res.status(201).json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Registration failed' });
+    }
+});
+
+app.post('/api/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username and password required' });
+        }
+        const collection = await getCollection('users');
+        const user = await collection.findOne({ username });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        const valid = await bcrypt.compare(password, user.password);
+        if (!valid) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '7d' });
+        res.json({ token, username });
+    } catch (err) {
+        res.status(500).json({ error: 'Login failed' });
     }
 });
 
