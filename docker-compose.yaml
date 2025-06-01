@@ -1,0 +1,53 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3033:80"
+    container_name: stockfolio-app
+    restart: unless-stopped
+    environment:
+      - USE_MONGO_DB=true
+    env_file:
+      - .env
+    networks:
+      - stockfolio-network
+
+  mongo:
+    image: mongo:latest
+    container_name: stockfolio-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - stockfolio-network
+
+  api:
+    build:
+      context: ./server
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/stockfolio
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+    networks:
+      - stockfolio-network
+    env_file:
+      - ./server/.env
+      
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  stockfolio-network:
+    driver: bridge

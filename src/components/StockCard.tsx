@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BarChart4, Trash2, ChevronDown, ChevronUp, FileEdit, Bookmark } from 'lucide-react';
 import Card, { CardHeader, CardContent, CardFooter } from './ui/Card';
 import Button from './ui/Button';
-import { deleteStock, updateStock, getNotes } from '../services/stockService';
+import { deleteStock, updateStock } from '../services/stockService';
+import { getNotes } from '../services/noteService';
 import { Stock } from '../types';
 import StockNotes from './StockNotes';
 import Input from './ui/Input';
@@ -33,13 +34,17 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
     { name: 'Red', text: 'text-red-500', bg: 'bg-red-500', border: 'border-red-500' },
   ];
 
-  const tradingViewUrl = `https://de.tradingview.com/chart/${stock.chart_id}?symbol=${stock.ticker_symbol}`;
+  const getChartId = () => {
+    return import.meta.env.VITE_TRADINGVIEW_CHART_ID || '';
+  };
+
+  const tradingViewUrl = `https://de.tradingview.com/chart/${getChartId()}?symbol=${stock.ticker_symbol}`;
 
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete ${stock.display_name}? This will also delete all associated notes.`)) {
       setIsDeleting(true);
       try {
-        const result = await deleteStock(stock.id);
+        const result = await deleteStock(stock.ticker_symbol);
         if (result) {
           onDelete();
         }
@@ -53,7 +58,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
 
   const handleSave = async () => {
     try {
-      await updateStock(stock.id, { ticker_symbol: tickerSymbol, display_name: displayName });
+      await updateStock(stock.ticker_symbol, { ticker_symbol: tickerSymbol, display_name: displayName });
       stock.ticker_symbol = tickerSymbol;
       stock.display_name = displayName;
       setEditing(false);
@@ -65,7 +70,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
   const handleToggleInteresting = async () => {
     try {
       const updatedStock = { ...stock, is_interesting: !isInteresting };
-      await updateStock(stock.id, updatedStock);
+      await updateStock(stock.ticker_symbol, updatedStock);
       setIsInteresting(!isInteresting); 
     } catch (error) {
       console.error('Error updating stock:', error);
@@ -75,7 +80,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
   const handleColorChange = async (color: string) => {
     setBookmarkColor(color);
     try {
-      await updateStock(stock.id, { bookmark_color: color, is_interesting: true });
+      await updateStock(stock.ticker_symbol, { bookmark_color: color, is_interesting: true });
       setIsInteresting(true);
       onUpdate?.();
     } catch (error) {
@@ -84,13 +89,13 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
   };
 
   const refreshNoteCount = React.useCallback(async () => {
-    const notes = await getNotes(stock.id);
+    const notes = await getNotes(stock.ticker_symbol);
     setNoteCount(notes.length);
-  }, [stock.id]);
+  }, [stock.ticker_symbol]);
 
   useEffect(() => {
     refreshNoteCount();
-  }, [stock.id, refreshNoteCount]);
+  }, [stock.ticker_symbol, refreshNoteCount]);
 
   useEffect(() => {
     if (expandedDetails && activeTab === 'chart') {
@@ -111,7 +116,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
           "enable_publishing": false,
           "hide_side_toolbar": false,
           "allow_symbol_change": true,
-          "container_id": `tradingview_${stock.id}`
+          "container_id": `tradingview_${stock.ticker_symbol}`
         });
       };
       document.head.appendChild(script);
@@ -120,7 +125,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
         document.head.removeChild(script);
       };
     }
-  }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id]);
+  }, [expandedDetails, activeTab, stock.ticker_symbol]);
 
   useEffect(() => {
     if (expandedDetails && activeTab === 'overview') {
@@ -134,7 +139,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
         colorTheme: document.documentElement.classList.contains('dark') ? "dark" : "light",
         isTransparent: true,
       });
-      const container = document.getElementById(`symbol-info_${stock.id}`);
+      const container = document.getElementById(`symbol-info_${stock.ticker_symbol}`);
       container?.appendChild(script);
 
       return () => {
@@ -143,7 +148,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
         }
       };
     }
-  }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id]);
+  }, [expandedDetails, activeTab, stock.ticker_symbol]);
 
   useEffect(() => {
     if (expandedDetails && activeTab === 'overview') {      
@@ -162,7 +167,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
         colorTheme: document.documentElement.classList.contains('dark') ? "dark" : "light",
         largeChartUrl: tradingViewUrl,
       });
-      const container = document.getElementById(`trend-widget_${stock.id}`);
+      const container = document.getElementById(`trend-widget_${stock.ticker_symbol}`);
       container?.appendChild(script);
 
       return () => {
@@ -171,7 +176,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
         }
       };
     }
-  }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id, tradingViewUrl]);
+  }, [expandedDetails, activeTab, stock.ticker_symbol, tradingViewUrl]);
 
   useEffect(() => {
     if (expandedDetails && activeTab === 'financials') {
@@ -188,7 +193,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
         symbol: stock.ticker_symbol,
         locale: "de_DE",
       });
-      const container = document.getElementById(`financials-widget_${stock.id}`);
+      const container = document.getElementById(`financials-widget_${stock.ticker_symbol}`);
       container?.appendChild(script);
 
       return () => {
@@ -197,7 +202,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
         }
       };
     }
-  }, [expandedDetails, activeTab, stock.ticker_symbol, stock.id, tradingViewUrl]);
+  }, [expandedDetails, activeTab, stock.ticker_symbol, tradingViewUrl]);
 
   useEffect(() => {
     setExpandedDetails(detailsOpen);
@@ -318,12 +323,12 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
 
           {activeTab === 'overview' && (
             <div className="flex flex-wrap gap-4">
-              <section id={`symbol-info_${stock.id}`} className="flex-2 min-w-[150px]">
+              <section id={`symbol-info_${stock.ticker_symbol}`} className="flex-2 min-w-[150px]">
                 <div className="tradingview-widget-container">
                   <div className="tradingview-widget-container__widget"></div>
                 </div>
               </section>
-              <section id={`trend-widget_${stock.id}`} className="flex-1 min-w-[300px]">
+              <section id={`trend-widget_${stock.ticker_symbol}`} className="flex-1 min-w-[300px]">
                 <div className="tradingview-widget-container">
                   <div className="tradingview-widget-container__widget"></div>
                 </div>
@@ -333,17 +338,17 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
 
           {activeTab === 'chart' && (
             <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
-              <div id={`tradingview_${stock.id}`}></div>
+              <div id={`tradingview_${stock.ticker_symbol}`}></div>
             </div>
           )}
 
           {activeTab === 'notes' && (
-            <StockNotes stockId={stock.id} onNotesUpdated={refreshNoteCount} />
+            <StockNotes stockId={stock.ticker_symbol} onNotesUpdated={refreshNoteCount} />
           )}
 
           {activeTab === 'financials' && (
             <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
-              <div id={`financials-widget_${stock.id}`}></div>
+              <div id={`financials-widget_${stock.ticker_symbol}`}></div>
             </div>
           )}
         </CardContent>
