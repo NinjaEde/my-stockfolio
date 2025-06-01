@@ -35,11 +35,21 @@ StockfolioPro is a modern web application for managing your stock portfolio. You
    # or
    yarn
    ```
-3. Create a `.env` file in the project root:
-   ```env
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   VITE_TRADINGVIEW_CHART_ID=Qkb0J0s0  # Chart ID for TradingView
+3. Create `.env` files:
+
+   **Frontend (`.env` in project root):**
+   ```
+   VITE_SUPABASE_URL=...         # Optional, for Supabase
+   VITE_SUPABASE_ANON_KEY=...    # Optional, for Supabase
+   VITE_TRADINGVIEW_CHART_ID=... # TradingView chart_id for all stocks
+   ```
+   **Tip:** For TradingView integration, usually a single chart ID (e.g. `Qkb0J0s0`) is sufficient.
+
+   **Backend (`server/.env`):**
+   ```
+   PORT=4000
+   MONGO_URI=mongodb://mongo:27017/stockfolio
+   JWT_SECRET=your_secret_token
    ```
 4. Start development:
    ```bash
@@ -66,18 +76,7 @@ StockfolioPro is a modern web application for managing your stock portfolio. You
 
 ## Environment Variables
 
-**Frontend (`.env` in project root):**
-```
-VITE_SUPABASE_URL=...         # Optional, for Supabase
-VITE_SUPABASE_ANON_KEY=...    # Optional, for Supabase
-VITE_TRADINGVIEW_CHART_ID=... # TradingView chart_id for all stocks
-```
-**Backend (`server/.env`):**
-```
-PORT=4000
-MONGO_URI=mongodb://mongo:27017/stockfolio
-JWT_SECRET=your_secret_token
-```
+
 
 ## Project Structure
 
@@ -107,6 +106,3 @@ The built frontend is located in the `dist` folder and can be served by any web 
 ## License
 MIT License
 
----
-
-**Tip:** For TradingView integration, usually a single chart ID (e.g. `Qkb0J0s0`) is sufficient. You can adjust this in the `.env` file.
