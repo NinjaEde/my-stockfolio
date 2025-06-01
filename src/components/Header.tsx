@@ -25,7 +25,6 @@ const Header: React.FC<HeaderProps> = ({ darkMode, setDarkMode, onLogout, userna
           <div className="flex items-center gap-4">
             {username && (
               <span className="flex items-center text-gray-200 text-sm mr-2">
-                {/* Avatar */}
                 <img
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=0D8ABC&color=fff&size=32`}
                   alt="Avatar"
@@ -38,8 +37,8 @@ const Header: React.FC<HeaderProps> = ({ darkMode, setDarkMode, onLogout, userna
               <button onClick={onLogout} className="text-blue-200 hover:underline">Logout</button>
             )}
             <Button
-              onClick={() => setDarkMode(!darkMode)}
-              className="flex items-center gap-2 px-4 py-2 rounded-md shadow  dark:bg-gray-700 dark:text-white text-gray-700  dark:hover:bg-gray-600 bg-blue-600"
+              variant={darkMode ? "primary" : "secondary"}
+              onClick={() => setDarkMode(!darkMode)}              
             >
               {darkMode ? <Sun size={18} /> : <Moon size={18} />}
             </Button>
