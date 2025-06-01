@@ -68,6 +68,38 @@ StockfolioPro is a web application for managing your stock portfolio. It allows 
 
 5. Open your browser and navigate to `http://localhost:5173`
 
+## Frontend-Umgebungsvariablen
+
+Lege eine Datei `.env` im Projekt-Root (nicht im server-Ordner!) mit folgendem Inhalt an:
+
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Diese Variablen werden nur im Frontend verwendet und sind im Browser sichtbar. Alle Variablen für das Frontend müssen mit `VITE_` beginnen.
+
+---
+
+## Backend-Umgebungsvariablen
+
+Lege eine Datei `/server/.env` mit folgendem Inhalt an:
+
+```
+PORT=4000
+MONGO_URI=mongodb://mongo:27017/stockfolio
+JWT_SECRET=dein_geheimes_token
+```
+
+In der `docker-compose.yaml` muss im `api`-Service folgendes stehen:
+
+```yaml
+  env_file:
+    - ./server/.env
+```
+
+Dadurch werden die Umgebungsvariablen beim Starten des Containers automatisch gesetzt.
+
 ## Project Structure
 
 ```bash

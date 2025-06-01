@@ -26,12 +26,18 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
         setError(res.error || 'Login fehlgeschlagen');
       }
     } else {
-      const res = await register(username, password);
-      if (res.success) {
-        setMode('login');
-        setError('Registrierung erfolgreich! Bitte einloggen.');
+      const regRes = await register(username, password);
+      if (regRes.success) {
+        // Nach erfolgreicher Registrierung automatisch einloggen
+        const loginRes = await login(username, password);
+        if (loginRes.token && loginRes.username) {
+          onAuthSuccess(loginRes.token, loginRes.username);
+        } else {
+          // Fallback: trotzdem weiterleiten, falls Registrierung erfolgreich war
+          onAuthSuccess('', username);
+        }
       } else {
-        setError(res.error || 'Registrierung fehlgeschlagen');
+        setError(regRes.error || 'Registrierung fehlgeschlagen');
       }
     }
     setLoading(false);

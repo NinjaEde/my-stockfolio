@@ -40,6 +40,8 @@ services:
       - mongo
     networks:
       - stockfolio-network
+    env_file:
+      - ./server/.env
       
 
 volumes:
