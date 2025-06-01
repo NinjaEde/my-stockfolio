@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({ darkMode, setDarkMode, onLogout, userna
           </div>
           <div className="flex items-center gap-4">
             {username && (
-              <span className="text-gray-200">{username}</span>
+              <span className="text-gray-200 text-sm mr-2">Eingeloggt als <b>{username}</b></span>
             )}
             {onLogout && (
               <button onClick={onLogout} className="text-blue-200 hover:underline">Logout</button>

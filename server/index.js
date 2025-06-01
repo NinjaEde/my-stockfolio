@@ -23,21 +23,37 @@ async function getCollection(name) {
     return client.db(dbName).collection(name);
 }
 
+// --- AUTH MIDDLEWARE ---
+function authMiddleware(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+    const token = authHeader.split(' ')[1];
+    try {
+        const payload = jwt.verify(token, JWT_SECRET);
+        req.user = payload;
+        next();
+    } catch {
+        return res.status(401).json({ error: 'Invalid token' });
+    }
+}
+
 // --- STOCK ROUTES ---
 
-app.get('/api/stocks', async (_req, res) => {
+app.get('/api/stocks', authMiddleware, async (req, res) => {
     try {
         const collection = await getCollection('stocks');
-        const stocks = await collection.find().toArray();
+        const stocks = await collection.find({ username: req.user.username }).toArray();
         res.json(stocks);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch stocks' });
     }
 });
 
-app.post('/api/stocks', async (req, res) => {
+app.post('/api/stocks', authMiddleware, async (req, res) => {
     try {
-        const stock = req.body;
+        const stock = { ...req.body, username: req.user.username };
         const collection = await getCollection('stocks');
         await collection.insertOne(stock);
         res.status(201).json(stock);
@@ -46,21 +62,21 @@ app.post('/api/stocks', async (req, res) => {
     }
 });
 
-app.delete('/api/stocks/:id', async (req, res) => {
+app.delete('/api/stocks/:id', authMiddleware, async (req, res) => {
     try {
         const collection = await getCollection('stocks');
-        await collection.deleteOne({ ticker_symbol: req.params.id });
+        await collection.deleteOne({ ticker_symbol: req.params.id, username: req.user.username });
         res.status(204).end();
     } catch (err) {
         res.status(500).json({ error: 'Failed to delete stock' });
     }
 });
 
-app.put('/api/stocks/:id', async (req, res) => {
+app.put('/api/stocks/:id', authMiddleware, async (req, res) => {
     try {
         const updates = req.body;
         const collection = await getCollection('stocks');
-        await collection.updateOne({ ticker_symbol: req.params.id }, { $set: updates });
+        await collection.updateOne({ ticker_symbol: req.params.id, username: req.user.username }, { $set: updates });
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Failed to update stock' });
@@ -71,19 +87,19 @@ app.put('/api/stocks/:id', async (req, res) => {
 
 // --- NOTE ROUTES ---
 
-app.get('/api/notes/:stock_id', async (req, res) => {
+app.get('/api/notes/:stock_id', authMiddleware, async (req, res) => {
     try {
         const collection = await getCollection('notes');
-        const notes = await collection.find({ stock_id: req.params.stock_id }).toArray();
+        const notes = await collection.find({ stock_id: req.params.stock_id, username: req.user.username }).toArray();
         res.json(notes);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch notes' });
     }
 });
 
-app.post('/api/notes', async (req, res) => {
+app.post('/api/notes', authMiddleware, async (req, res) => {
     try {
-        const note = req.body;
+        const note = { ...req.body, username: req.user.username };
         if (!note.id) {
             note.id = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).slice(2);
         }
@@ -96,21 +112,21 @@ app.post('/api/notes', async (req, res) => {
     }
 });
 
-app.delete('/api/notes/:id', async (req, res) => {
+app.delete('/api/notes/:id', authMiddleware, async (req, res) => {
     try {
         const collection = await getCollection('notes');
-        await collection.deleteOne({ id: req.params.id });
+        await collection.deleteOne({ id: req.params.id, username: req.user.username });
         res.status(204).end();
     } catch (err) {
         res.status(500).json({ error: 'Failed to delete note' });
     }
 });
 
-app.put('/api/notes/:id', async (req, res) => {
+app.put('/api/notes/:id', authMiddleware, async (req, res) => {
     try {
         const updates = req.body;
         const collection = await getCollection('notes');
-        await collection.updateOne({ id: req.params.id }, { $set: updates });
+        await collection.updateOne({ id: req.params.id, username: req.user.username }, { $set: updates });
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: 'Failed to update note' });

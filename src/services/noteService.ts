@@ -1,17 +1,17 @@
 import type { Note } from '../types';
+import { fetchWithAuth } from './authService';
 
 const API_BASE = '/api';
 
 export const getNotes = async (stock_id: string): Promise<Note[]> => {
-  const res = await fetch(`${API_BASE}/notes/${stock_id}`);
+  const res = await fetchWithAuth(`${API_BASE}/notes/${stock_id}`);
   if (!res.ok) throw new Error('Failed to fetch notes');
   return res.json();
 };
 
 export const addNote = async (stock_id: string, content: string): Promise<Note> => {
-  const res = await fetch(`${API_BASE}/notes`, {
+  const res = await fetchWithAuth(`${API_BASE}/notes`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ stock_id, content }),
   });
   if (!res.ok) throw new Error('Failed to add note');
@@ -19,15 +19,14 @@ export const addNote = async (stock_id: string, content: string): Promise<Note> 
 };
 
 export const deleteNote = async (id: string): Promise<boolean> => {
-  const res = await fetch(`${API_BASE}/notes/${id}`, { method: 'DELETE' });
+  const res = await fetchWithAuth(`${API_BASE}/notes/${id}`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Failed to delete note');
   return true;
 };
 
 export const updateNote = async (id: string, content: string): Promise<boolean> => {
-  const res = await fetch(`${API_BASE}/notes/${id}`, {
+  const res = await fetchWithAuth(`${API_BASE}/notes/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content }),
   });
   if (!res.ok) throw new Error('Failed to update note');

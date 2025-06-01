@@ -53,19 +53,13 @@ function App() {
   return (
     <div>
       <div className="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white min-h-screen flex flex-col">
-        <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+        <Header
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          onLogout={handleLogout}
+          username={username ?? undefined}
+        />
         <main className="container mx-auto px-4 py-8 max-w-8xl flex-grow">
-          <div className="flex justify-end mb-4">
-            <span className="mr-4 text-gray-600 dark:text-gray-300">
-              Eingeloggt als <b>{username}</b>
-            </span>
-            <button
-              onClick={handleLogout}
-              className="text-blue-600 hover:underline"
-            >
-              Logout
-            </button>
-          </div>
           <AddStockForm onStockAdded={handleStockAdded} />
           <StockList key={refreshTrigger} />
         </main>
