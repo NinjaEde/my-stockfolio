@@ -1,112 +1,112 @@
 # StockfolioPro
 
-StockfolioPro ist eine moderne Webanwendung zur Verwaltung deines Aktienportfolios. Du kannst Aktien hinzufügen, Notizen mit Markdown speichern und TradingView-Charts direkt einsehen.
+StockfolioPro is a modern web application for managing your stock portfolio. You can add stocks, save notes with Markdown, and view TradingView charts directly.
 
 ![StockfolioPro Screenshot](screenshot.png)
 
 ## Features
 
-- Aktien-Portfolio verwalten (Hinzufügen, Bearbeiten, Löschen)
-- Notizen mit Markdown und Checklisten
-- TradingView-Chart-Integration
-- Farbige Bookmarks für Favoriten
-- Responsive Design & Dark Mode
-- Offline-First (lokale Speicherung)
-- MongoDB-Integration (optional)
-- Supabase-Integration (optional)
+- Manage stock portfolio (add, edit, delete)
+- Notes with Markdown and checklists
+- TradingView chart integration
+- Colored bookmarks for favorites
+- Responsive design & dark mode
+- Offline-first (local storage)
+- MongoDB integration (optional)
+- Supabase integration (optional)
 
-## Schnellstart
+## Quick Start
 
-### Voraussetzungen
+### Prerequisites
 - Node.js (v16+)
-- npm oder yarn
+- npm or yarn
 - Optional: Docker & Docker Compose
 
-### Installation (ohne Docker)
+### Installation (without Docker)
 
-1. Repository klonen:
+1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/stockfolio.git
    cd stockfolio
    ```
-2. Abhängigkeiten installieren:
+2. Install dependencies:
    ```bash
    npm install
-   # oder
+   # or
    yarn
    ```
-3. `.env` im Projekt-Root anlegen:
+3. Create a `.env` file in the project root:
    ```env
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   VITE_TRADINGVIEW_CHART_ID=Qkb0J0s0  # Chart-ID für TradingView
+   VITE_TRADINGVIEW_CHART_ID=Qkb0J0s0  # Chart ID for TradingView
    ```
-4. Entwicklung starten:
+4. Start development:
    ```bash
    npm run dev
-   # oder
+   # or
    yarn dev
    ```
-5. App öffnen: [http://localhost:5173](http://localhost:5173)
+5. Open the app: [http://localhost:5173](http://localhost:5173)
 
 ### Docker & Docker Compose
 
-1. `.env` (Frontend) und `server/.env` (Backend) wie oben anlegen.
-2. Alles bauen & starten:
+1. Create `.env` (frontend) and `server/.env` (backend) as above.
+2. Build & start everything:
    ```bash
    docker-compose up --build
    ```
-3. App öffnen: [http://localhost:3033](http://localhost:3033)
-4. Stoppen:
+3. Open the app: [http://localhost:3033](http://localhost:3033)
+4. Stop:
    ```bash
    docker-compose down
    ```
 
-> Die Umgebungsvariablen werden automatisch geladen. Änderungen an `.env` erfordern ggf. einen Neustart der Container.
+> Environment variables are loaded automatically. Changes to `.env` may require a container restart.
 
-## Umgebungsvariablen
+## Environment Variables
 
-**Frontend (`.env` im Projekt-Root):**
+**Frontend (`.env` in project root):**
 ```
-VITE_SUPABASE_URL=...         # Optional, für Supabase
-VITE_SUPABASE_ANON_KEY=...    # Optional, für Supabase
-VITE_TRADINGVIEW_CHART_ID=... # TradingView chart_id für alle Aktien
+VITE_SUPABASE_URL=...         # Optional, for Supabase
+VITE_SUPABASE_ANON_KEY=...    # Optional, for Supabase
+VITE_TRADINGVIEW_CHART_ID=... # TradingView chart_id for all stocks
 ```
 **Backend (`server/.env`):**
 ```
 PORT=4000
 MONGO_URI=mongodb://mongo:27017/stockfolio
-JWT_SECRET=dein_geheimes_token
+JWT_SECRET=your_secret_token
 ```
 
-## Projektstruktur
+## Project Structure
 
 ```bash
 stockfolio/
 ├── src/
-│   ├── components/      # React-Komponenten (inkl. ui/)
-│   ├── services/        # API- und Datenservices
-│   ├── types/           # TypeScript-Typen
+│   ├── components/      # React components (incl. ui/)
+│   ├── services/        # API and data services
+│   ├── types/           # TypeScript types
 │   ├── App.tsx, main.tsx, index.css
 ├── server/              # Backend (Node.js/Express)
-├── .env                 # Frontend-Variablen
-├── docker-compose.yaml  # Multi-Service Orchestrierung
-└── ...                  # Weitere Konfigurationsdateien
+├── .env                 # Frontend variables
+├── docker-compose.yaml  # Multi-service orchestration
+└── ...                  # Other configuration files
 ```
 
 ## Deployment
 
-Für Produktion:
+For production:
 ```bash
 npm run build
-# oder
+# or
 yarn build
 ```
-Das gebaute Frontend liegt im `dist`-Ordner und kann auf jedem Webserver bereitgestellt werden.
+The built frontend is located in the `dist` folder and can be served by any web server.
 
-## Lizenz
+## License
 MIT License
 
 ---
 
-**Tipp:** Für die TradingView-Integration reicht meist eine Chart-ID (z.B. `Qkb0J0s0`). Diese kann in der `.env` angepasst werden.
+**Tip:** For TradingView integration, usually a single chart ID (e.g. `Qkb0J0s0`) is sufficient. You can adjust this in the `.env` file.
