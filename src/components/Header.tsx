@@ -24,7 +24,15 @@ const Header: React.FC<HeaderProps> = ({ darkMode, setDarkMode, onLogout, userna
           </div>
           <div className="flex items-center gap-4">
             {username && (
-              <span className="text-gray-200 text-sm mr-2">Eingeloggt als <b>{username}</b></span>
+              <span className="flex items-center text-gray-200 text-sm mr-2">
+                {/* Avatar */}
+                <img
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=0D8ABC&color=fff&size=32`}
+                  alt="Avatar"
+                  className="w-8 h-8 rounded-full mr-2 border-2 border-white shadow"
+                />
+                Eingeloggt als <b className="ml-1">{username}</b>
+              </span>
             )}
             {onLogout && (
               <button onClick={onLogout} className="text-blue-200 hover:underline">Logout</button>
