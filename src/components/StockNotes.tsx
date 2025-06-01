@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
-import { Trash2, ListChecks } from 'lucide-react';
+import { Trash2, ListChecks, SquareCheckBig, SquareX } from 'lucide-react';
 import Button from './ui/Button';
-import Textarea from './ui/Textarea';
-import Input from './ui/Input';
-import Select from './ui/Select';
+import NoteWizard from './NoteWizard';
 import { getNotes, addNote, deleteNote, updateNote } from '../services/noteService';
 import { Note } from '../types';
 
 interface StockNotesProps {
   stockId: string;
-  onNotesUpdated?: () => void; // Add optional callback
+  onNotesUpdated?: () => void;
+  showStockSelect?: boolean;
 }
 
-const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
+const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated, showStockSelect = false }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
@@ -32,7 +31,6 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
     additionalNotes: '',
   });
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null); // Track the note being edited
-  const [currency, setCurrency] = useState<'EUR' | 'USD'>('EUR'); // State for currency selection
 
   const loadNotes = useCallback(async () => {
     setLoading(true);
@@ -78,7 +76,14 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
 
   const openWizard = () => {
     setShowWizard(true);
-    setEditingNoteId(null); // Ensure no note is being edited when opening the wizard
+    setEditingNoteId(null);
+    setWizardData({
+      movingAverages: { ma10: false, ma50: false, ma150: false, ma200: false },
+      volume: 'Low',
+      support: '',
+      resistance: '',
+      additionalNotes: '',
+    });
   };
 
   const closeWizard = () => {
@@ -86,47 +91,39 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
     setEditingNoteId(null); // Reset editing state when wizard is closed
   };
 
-  const handleWizardSubmit = async () => {
-    const { movingAverages, volume, support, resistance, additionalNotes } = wizardData;
-    const formattedNote = {
-      movingAverages,
-      volume,
-      support,
-      resistance,
-      additionalNotes,
-    };
-
+  const handleWizardSubmit = async (data: any) => {
     setAdding(true);
-
     try {
       if (editingNoteId) {
-        // Update existing note
-        const result = await updateNote(editingNoteId, JSON.stringify(formattedNote));
+        const result = await updateNote(editingNoteId, JSON.stringify(data));
         if (result) {
           setEditingNoteId(null);
           loadNotes();
-          onNotesUpdated?.(); // Notify parent
+          onNotesUpdated?.();
           closeWizard();
-        } else {
-          console.error('Failed to update note');
         }
       } else {
-        // Add new note
-        const result = await addNote(stockId, JSON.stringify(formattedNote));
+        const result = await addNote(stockId, JSON.stringify(data));
         if (result) {
           loadNotes();
-          onNotesUpdated?.(); // Notify parent
+          onNotesUpdated?.();
           closeWizard();
-        } else {
-          console.error('Failed to save note');
         }
       }
     } catch (err) {
-      console.error('Error saving note:', err);
+      // handle error
     } finally {
       setAdding(false);
     }
   };
+
+  // Helper for checked/unchecked icon
+  const renderCheckIcon = (checked: boolean) =>
+    checked ? (
+      <SquareCheckBig className="inline-block text-green-600 w-5 h-5" />
+    ) : (
+      <SquareX className="inline-block text-red-500 w-5 h-5" />
+    );
 
   const renderNoteContent = (noteContent: string) => {
     try {
@@ -146,7 +143,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                   Above 10 MA
                 </td>
                 <td className="table-cell">
-                  {note.movingAverages.ma10 ? '✔' : '✘'}
+                  {renderCheckIcon(note.movingAverages.ma10)}
                 </td>
               </tr>
               <tr>
@@ -154,7 +151,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                   Above 50 MA
                 </td>
                 <td className="table-cell">
-                  {note.movingAverages.ma50 ? '✔' : '✘'}
+                  {renderCheckIcon(note.movingAverages.ma50)}
                 </td>
               </tr>
               <tr>
@@ -162,7 +159,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                   Above 150 MA
                 </td>
                 <td className="table-cell">
-                  {note.movingAverages.ma150 ? '✔' : '✘'}
+                  {renderCheckIcon(note.movingAverages.ma150)}
                 </td>
               </tr>
               <tr>
@@ -170,7 +167,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                   Above 200 MA
                 </td>
                 <td className="table-cell">
-                  {note.movingAverages.ma200 ? '✔' : '✘'}
+                  {renderCheckIcon(note.movingAverages.ma200)}
                 </td>
               </tr>
 
@@ -198,7 +195,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                   Support
                 </td>
                 <td className="table-cell">
-                  {note.support} {currency}
+                  {note.support}
                 </td>
               </tr>
               <tr>
@@ -206,7 +203,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
                   Resistance
                 </td>
                 <td className="table-cell">
-                  {note.resistance} {currency}
+                  {note.resistance}
                 </td>
               </tr>
 
@@ -243,135 +240,37 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated }) => {
     }
   };
 
-  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCurrency(e.target.value as 'EUR' | 'USD');
-  };
-
-  const parseCurrencyValue = (value: string) => {
-    // Replace German comma separator with a dot for parsing
-    const normalizedValue = value.replace(',', '.');
-    const numericValue = parseFloat(normalizedValue);
-    return isNaN(numericValue) ? '' : numericValue.toFixed(2); // Ensure two decimal places
-  };
-
-  const handleBlur = (field: 'support' | 'resistance') => {
-    setWizardData((prev) => ({
-      ...prev,
-      [field]: parseCurrencyValue(prev[field]),
-    }));
-  };
-
   return (
     <div className="space-y-6">
-      <div>
+      {showStockSelect && (
+        <div className="mb-2">
+          <label className="block text-sm font-medium mb-1">Select Stock</label>
+          {/* TODO: Implement stock selection if needed for multi-stock mode. For now, handled in StockNotesMultiDialog. */}
+        </div>
+      )}
+
+      <div className="flex justify-end">
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          onClick={openWizard} // Directly open the wizard
+          onClick={openWizard}
           className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
         >
           <ListChecks size={16} />
           Add New Note
         </Button>
       </div>
-
       {showWizard && (
         <div className="fixed inset-0 bg-black/35 dark:bg-black/75 flex justify-center items-center z-50 h-dvh">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg">
-            <h3 className="text-lg font-semibold mb-4">Technical Analysis Wizard</h3>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium">Moving Averages</h4>
-                <div className="space-y-2">
-                  {(['ma10', 'ma50', 'ma150', 'ma200'] as const).map((key) => (
-                    <label key={key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={wizardData.movingAverages[key]}
-                        onChange={(e) =>
-                          setWizardData((prev) => ({
-                            ...prev,
-                            movingAverages: { ...prev.movingAverages, [key]: e.target.checked },
-                          }))
-                        }
-                      />
-                      <span>Above {key.replace('ma', '')} MA</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-medium">Volume</h4>
-                <select
-                  value={wizardData.volume}
-                  onChange={(e) => setWizardData((prev) => ({ ...prev, volume: e.target.value }))}
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600 border-gray-300"
-                >
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                </select>
-              </div>
-
-              <div>
-                <h4 className="font-medium">Price Levels</h4>
-                <div className="flex items-end gap-4">
-                  <Input
-                    label="Support"
-                    value={wizardData.support}
-                    onChange={(e) =>
-                      setWizardData((prev) => ({
-                        ...prev,
-                        support: e.target.value, // Allow raw input
-                      }))
-                    }
-                    onBlur={() => handleBlur('support')} // Format on blur
-                    className="flex-1"
-                  />
-                  <Input
-                    label="Resistance"
-                    value={wizardData.resistance}
-                    onChange={(e) =>
-                      setWizardData((prev) => ({
-                        ...prev,
-                        resistance: e.target.value, // Allow raw input
-                      }))
-                    }
-                    onBlur={() => handleBlur('resistance')} // Format on blur
-                    className="flex-1"
-                  />
-                  <Select
-                    label="Currency"
-                    value={currency}
-                    onChange={handleCurrencyChange}
-                    className="flex-1"
-                  >
-                    <option value="EUR">EUR</option>
-                    <option value="USD">USD</option>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-medium">Additional Notes</h4>
-                <Textarea
-                  value={wizardData.additionalNotes}
-                  onChange={(e) => setWizardData((prev) => ({ ...prev, additionalNotes: e.target.value }))}
-                  rows={3}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-2 mt-4">
-              <Button variant="secondary" onClick={closeWizard}>
-                Cancel
-              </Button>
-              <Button onClick={handleWizardSubmit} disabled={adding}>
-                {adding ? 'Saving...' : editingNoteId ? 'Update' : 'Add Note'}
-              </Button>
-            </div>
+            <NoteWizard
+              onSubmit={handleWizardSubmit}
+              loading={adding}
+              initialData={wizardData}
+              onCancel={closeWizard}
+              editing={!!editingNoteId}
+            />
           </div>
         </div>
       )}

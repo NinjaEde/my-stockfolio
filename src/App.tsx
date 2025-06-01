@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import AddStockForm from "./components/AddStockForm";
 import StockList from "./components/StockList";
 import Auth from "./components/Auth";
+import AddMultiNotesPanel from "./components/AddMultiNotesPanel";
 
 function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -60,14 +61,16 @@ function App() {
           username={username ?? undefined}
         />
         <main className="container mx-auto px-4 py-8 max-w-8xl flex-grow">
-          <AddStockForm onStockAdded={handleStockAdded} />
+          <div className="flex flex-col md:flex-row gap-6">
+            <AddStockForm onStockAdded={handleStockAdded} />
+            <AddMultiNotesPanel />
+          </div>
           <StockList key={refreshTrigger} />
         </main>
         <footer className="bg-blue-600 dark:bg-violet-900 text-gray-300 py-6 mt-12">
           <div className="container mx-auto px-4 text-center">
             <p className="text-sm">
-              &copy; {new Date().getFullYear()} StockfolioPro. All rights
-              reserved.
+              &copy; {new Date().getFullYear()} StockfolioPro. All rights reserved.
             </p>
           </div>
         </footer>
