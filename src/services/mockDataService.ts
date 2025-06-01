@@ -26,11 +26,14 @@ const setStoredNotes = (notes: Note[]) => {
 // Mock service functions
 export const addStock = async (ticker_symbol: string, display_name: string): Promise<Stock | null> => {
   try {
+    // Always use a valid ISO string for created_at
+    const now = new Date();
+    const created_at = isNaN(now.getTime()) ? new Date().toISOString() : now.toISOString();
     const newStock: Stock = {
       id: uuidv4(),
       ticker_symbol,
       display_name,
-      created_at: new Date().toISOString(),
+      created_at,
       is_interesting: false,
       bookmark_color: 'text-green-500'
     };

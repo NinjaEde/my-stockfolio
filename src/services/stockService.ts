@@ -10,10 +10,12 @@ export const getStocks = async (): Promise<Stock[]> => {
 };
 
 export const addStock = async (ticker_symbol: string, display_name: string): Promise<Stock> => {
+  const now = new Date();
+  const created_at = isNaN(now.getTime()) ? new Date().toISOString() : now.toISOString();
   const res = await fetchWithAuth(`${API_BASE}/stocks`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ticker_symbol, display_name }),
+    body: JSON.stringify({ ticker_symbol, display_name, created_at }),
   });
   if (!res.ok) throw new Error('Failed to add stock');
   return res.json();

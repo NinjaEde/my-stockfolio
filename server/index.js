@@ -53,7 +53,11 @@ app.get('/api/stocks', authMiddleware, async (req, res) => {
 
 app.post('/api/stocks', authMiddleware, async (req, res) => {
     try {
-        const stock = { ...req.body, username: req.user.username };
+        let stock = { ...req.body, username: req.user.username };
+        // Ensure created_at is always a valid ISO string
+        if (!stock.created_at || isNaN(Date.parse(stock.created_at))) {
+            stock.created_at = new Date().toISOString();
+        }
         const collection = await getCollection('stocks');
         await collection.insertOne(stock);
         res.status(201).json(stock);
