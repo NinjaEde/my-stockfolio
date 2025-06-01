@@ -86,7 +86,7 @@ Diese Variablen werden nur im Frontend verwendet und sind im Browser sichtbar. A
 
 ## Backend-Umgebungsvariablen
 
-Lege eine Datei `/server/.env` mit folgendem Inhalt an:
+Lege eine Datei `server/.env` mit folgendem Inhalt an:
 
 ```
 PORT=4000
@@ -101,7 +101,14 @@ In der `docker-compose.yaml` muss im `app`-Service folgendes stehen:
     - .env
 ```
 
-Dadurch werden die Umgebungsvariablen beim Starten des Containers automatisch gesetzt.
+Und im `api`-Service:
+
+```yaml
+  env_file:
+    - ./server/.env
+```
+
+Dadurch werden die Umgebungsvariablen beim Starten der Container automatisch gesetzt.
 
 ## Project Structure
 
@@ -110,14 +117,42 @@ stockfolio/
 ├── public/              # Static assets
 ├── src/
 │   ├── components/      # React components
-│   │   ├── ui/          # Reusable UI components
-│   │   └── ...          # Feature components
+│   │   ├── ui/          # Reusable UI components (Button, Card, Input, etc.)
+│   │   ├── AddStockForm.tsx
+│   │   ├── Auth.tsx
+│   │   ├── Header.tsx
+│   │   ├── StockCard.tsx
+│   │   ├── StockList.tsx
+│   │   └── StockNotes.tsx
 │   ├── services/        # API and data services
+│   │   ├── authService.ts
+│   │   ├── bookmarkService.ts
+│   │   ├── mockDataService.ts
+│   │   ├── noteService.ts
+│   │   ├── stockService.ts
+│   │   └── supabaseClient.ts
 │   ├── types/           # TypeScript type definitions
+│   │   ├── index.ts
+│   │   └── tradingview.d.ts
 │   ├── App.tsx          # Main application component
-│   └── main.tsx         # Application entry point
-├── supabase/            # Supabase migrations and config
-└── ...                  # Configuration files
+│   ├── main.tsx         # Application entry point
+│   ├── index.css        # Global styles (Tailwind)
+│   └── types.ts         # (Legacy/compatibility types)
+├── server/              # Backend (Node.js/Express API)
+│   ├── Dockerfile
+│   ├── index.js
+│   ├── mongoDataService.ts
+│   ├── package.json
+│   └── .env             # Backend environment variables
+├── Dockerfile           # Frontend Dockerfile
+├── docker-compose.yaml  # Multi-service orchestration
+├── README.md
+├── package.json         # Frontend dependencies
+├── tailwind.config.js   # Tailwind CSS config
+├── tsconfig.json        # TypeScript config
+├── vite.config.ts       # Vite config
+├── .env                 # Frontend environment variables
+└── ...                  # Other configuration files
 ```
 
 ## Using the Application
