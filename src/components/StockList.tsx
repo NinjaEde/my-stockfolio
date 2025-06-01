@@ -153,34 +153,38 @@ const StockList: React.FC = () => {
         </>
       ) : groupByColor ? (
         <div className="space-y-8">
-          {Object.entries(groupedStocks)
-            .filter(([color]) => !filterColor || color === filterColor)
-            .map(([color, stocksInGroup]) => (
-              <div key={color}>
-                <div className="flex items-center mb-2">
-                  <Tag className={`${color} mr-2`} size={18} />
-                  <span className={`font-semibold ${color}`}>{BOOKMARK_COLORS.find(c => c.value === color)?.name || color}</span>
-                  <span className="ml-2 text-xs text-gray-400">({stocksInGroup.length})</span>
+          {BOOKMARK_COLORS
+            .filter(c => c.value && (!filterColor || c.value === filterColor))
+            .map(c => {
+              const stocksInGroup = groupedStocks[c.value] || [];
+              if (stocksInGroup.length === 0) return null;
+              return (
+                <div key={c.value}>
+                  <div className="flex items-center mb-2">
+                    <Tag className={`${c.value} mr-2`} size={18} />
+                    <span className={`font-semibold ${c.value}`}>{c.name}</span>
+                    <span className="ml-2 text-xs text-gray-400">({stocksInGroup.length})</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {stocksInGroup
+                      .filter(
+                        (stock) =>
+                          stock.ticker_symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          stock.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+                      )
+                      .map((stock) => (
+                        <StockCard
+                          key={stock.id}
+                          stock={stock}
+                          onDelete={handleStockDeleted}
+                          onUpdate={handleStockUpdated}
+                          detailsOpen={detailsOpen}
+                        />
+                      ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {stocksInGroup
-                    .filter(
-                      (stock) =>
-                        stock.ticker_symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        stock.display_name.toLowerCase().includes(searchQuery.toLowerCase())
-                    )
-                    .map((stock) => (
-                      <StockCard
-                        key={stock.id}
-                        stock={stock}
-                        onDelete={handleStockDeleted}
-                        onUpdate={handleStockUpdated}
-                        detailsOpen={detailsOpen}
-                      />
-                    ))}
-                </div>
-              </div>
-            ))}
+              );
+            })}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

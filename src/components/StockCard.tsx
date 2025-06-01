@@ -287,72 +287,77 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
         </div>
       </CardHeader>
 
-      {expandedDetails && (
-        <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-6 flex-grow">
-          <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-600 pb-2">
-            <button
-              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'overview' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('overview')}
-            >
-              Overview
-            </button>
-            <button
-              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'chart' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('chart')}
-            >
-              Chart
-            </button>
-            <button
-              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'financials' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('financials')}
-            >
-              Financials
-            </button>
-            <button
-              className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'notes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('notes')}
-            >
-              Notes
-              {noteCount > 0 && (
-                <span className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-600 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
-                  {noteCount}
-                </span>
-              )}
-            </button>
-          </div>
-
-          {activeTab === 'overview' && (
-            <div className="flex flex-wrap gap-4">
-              <section id={`symbol-info_${stock.ticker_symbol}`} className="flex-2 min-w-[150px]">
-                <div className="tradingview-widget-container">
-                  <div className="tradingview-widget-container__widget"></div>
-                </div>
-              </section>
-              <section id={`trend-widget_${stock.ticker_symbol}`} className="flex-1 min-w-[300px]">
-                <div className="tradingview-widget-container">
-                  <div className="tradingview-widget-container__widget"></div>
-                </div>
-              </section>
+      {/* Collapsible Details Section with Animation */}
+      <div
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedDetails ? 'max-h-[1200px] py-6' : 'max-h-0 py-0'}`}
+      >
+        {expandedDetails && (
+          <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-6 flex-grow">
+            <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-600 pb-2">
+              <button
+                className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'overview' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+                onClick={() => setActiveTab('overview')}
+              >
+                Overview
+              </button>
+              <button
+                className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'chart' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+                onClick={() => setActiveTab('chart')}
+              >
+                Chart
+              </button>
+              <button
+                className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'financials' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+                onClick={() => setActiveTab('financials')}
+              >
+                Financials
+              </button>
+              <button
+                className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'notes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+                onClick={() => setActiveTab('notes')}
+              >
+                Notes
+                {noteCount > 0 && (
+                  <span className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-600 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+                    {noteCount}
+                  </span>
+                )}
+              </button>
             </div>
-          )}
 
-          {activeTab === 'chart' && (
-            <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
-              <div id={`tradingview_${stock.ticker_symbol}`}></div>
-            </div>
-          )}
+            {activeTab === 'overview' && (
+              <div className="flex flex-wrap gap-4">
+                <section id={`symbol-info_${stock.ticker_symbol}`} className="flex-2 min-w-[150px]">
+                  <div className="tradingview-widget-container">
+                    <div className="tradingview-widget-container__widget"></div>
+                  </div>
+                </section>
+                <section id={`trend-widget_${stock.ticker_symbol}`} className="flex-1 min-w-[300px]">
+                  <div className="tradingview-widget-container">
+                    <div className="tradingview-widget-container__widget"></div>
+                  </div>
+                </section>
+              </div>
+            )}
 
-          {activeTab === 'notes' && (
-            <StockNotes stockId={stock.ticker_symbol} onNotesUpdated={refreshNoteCount} />
-          )}
+            {activeTab === 'chart' && (
+              <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
+                <div id={`tradingview_${stock.ticker_symbol}`}></div>
+              </div>
+            )}
 
-          {activeTab === 'financials' && (
-            <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
-              <div id={`financials-widget_${stock.ticker_symbol}`}></div>
-            </div>
-          )}
-        </CardContent>
-      )}
+            {activeTab === 'notes' && (
+              <StockNotes stockId={stock.ticker_symbol} onNotesUpdated={refreshNoteCount} />
+            )}
+
+            {activeTab === 'financials' && (
+              <div className="w-full h-[400px] bg-gray-50 dark:bg-gray-800">
+                <div id={`financials-widget_${stock.ticker_symbol}`}></div>
+              </div>
+            )}
+          </CardContent>
+        )}
+      </div>
 
       <CardFooter className="flex justify-between items-center dark:bg-gray-700 mt-auto">
         <p className="text-xs text-gray-500 dark:text-gray-300">
