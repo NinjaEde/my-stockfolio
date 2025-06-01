@@ -75,9 +75,12 @@ Lege eine Datei `.env` im Projekt-Root (nicht im server-Ordner!) mit folgendem I
 ```
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_TRADINGVIEW_CHART_ID=Qkb0J0s0  # TradingView chart_id für alle Aktien (z.B. Qkb0J0s0)
 ```
 
 Diese Variablen werden nur im Frontend verwendet und sind im Browser sichtbar. Alle Variablen für das Frontend müssen mit `VITE_` beginnen.
+
+> **Hinweis:** Die Variable `VITE_TRADINGVIEW_CHART_ID` wird für alle TradingView-Chart-URLs verwendet. Wenn du einen anderen Chart-Container nutzen möchtest, passe den Wert entsprechend an.
 
 ---
 
@@ -91,11 +94,11 @@ MONGO_URI=mongodb://mongo:27017/stockfolio
 JWT_SECRET=dein_geheimes_token
 ```
 
-In der `docker-compose.yaml` muss im `api`-Service folgendes stehen:
+In der `docker-compose.yaml` muss im `app`-Service folgendes stehen:
 
 ```yaml
   env_file:
-    - ./server/.env
+    - .env
 ```
 
 Dadurch werden die Umgebungsvariablen beim Starten des Containers automatisch gesetzt.

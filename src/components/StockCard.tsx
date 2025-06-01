@@ -34,7 +34,11 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
     { name: 'Red', text: 'text-red-500', bg: 'bg-red-500', border: 'border-red-500' },
   ];
 
-  const tradingViewUrl = `https://de.tradingview.com/chart/${stock.chart_id}?symbol=${stock.ticker_symbol}`;
+  const getChartId = () => {
+    return import.meta.env.VITE_TRADINGVIEW_CHART_ID || '';
+  };
+
+  const tradingViewUrl = `https://de.tradingview.com/chart/${getChartId()}?symbol=${stock.ticker_symbol}`;
 
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete ${stock.display_name}? This will also delete all associated notes.`)) {

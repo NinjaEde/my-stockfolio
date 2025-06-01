@@ -30,7 +30,6 @@ export const addStock = async (ticker_symbol: string, display_name: string): Pro
       id: uuidv4(),
       ticker_symbol,
       display_name,
-      chart_id: "Qkb0J0s0",
       created_at: new Date().toISOString(),
       is_interesting: false,
       bookmark_color: 'text-green-500'

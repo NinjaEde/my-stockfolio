@@ -8,8 +8,8 @@ services:
     restart: unless-stopped
     environment:
       - USE_MONGO_DB=true
-    # env_file:
-    #  - .env
+    env_file:
+      - .env
     networks:
       - stockfolio-network
 
