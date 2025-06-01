@@ -174,7 +174,7 @@ const StockList: React.FC = () => {
                       )
                       .map((stock) => (
                         <StockCard
-                          key={stock.id}
+                          key={stock.id || stock.ticker_symbol}
                           stock={stock}
                           onDelete={handleStockDeleted}
                           onUpdate={handleStockUpdated}
@@ -190,7 +190,7 @@ const StockList: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredStocks.map((stock) => (
             <StockCard 
-              key={stock.id} 
+              key={stock.id || stock.ticker_symbol} 
               stock={stock} 
               onDelete={handleStockDeleted} 
               onUpdate={handleStockUpdated}
