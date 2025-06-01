@@ -190,6 +190,49 @@ yarn build
 
 The built files will be in the `dist` directory, ready to be deployed to any static hosting service.
 
+## Docker & Docker Compose
+
+Das Projekt kann komplett mit Docker und Docker Compose gebaut und gestartet werden. Damit lassen sich Frontend, Backend und Datenbank einfach als Container betreiben.
+
+### Build & Start
+
+1. **Voraussetzungen:**
+   - [Docker](https://www.docker.com/) und [Docker Compose](https://docs.docker.com/compose/) müssen installiert sein.
+   - Lege die `.env` im Projekt-Root (Frontend) und `server/.env` (Backend) wie oben beschrieben an.
+
+2. **Build & Start aller Services:**
+   
+   ```bash
+   docker-compose up --build
+   ```
+   
+   Das baut die Images und startet alle Services (Frontend, Backend, MongoDB) im Hintergrund.
+
+3. **Nur Build (ohne Start):**
+   
+   ```bash
+   docker-compose build
+   ```
+
+4. **Logs anzeigen:**
+   
+   ```bash
+   docker-compose logs -f
+   ```
+
+5. **Services stoppen:**
+   
+   ```bash
+   docker-compose down
+   ```
+
+6. **Frontend erreichbar unter:**
+   
+   [http://localhost:3033](http://localhost:3033)
+
+
+> Die Umgebungsvariablen werden automatisch aus den jeweiligen `.env`-Dateien geladen (siehe oben). Änderungen an der `.env` erfordern ggf. einen Neustart des Containers.
+
 ## Future Enhancements
 
 - User authentication
