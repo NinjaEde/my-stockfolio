@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { getStocks } from '../services/stockService';
-import { getStocksByBookmarkColor, groupStocksByBookmarkColor } from '../services/bookmarkService';
 import { Stock } from '../types';
 import StockCard from './StockCard';
 import Input from './ui/Input';
-import { Filter, ChevronsDownUp, ChevronsUpDown, Layers, Tag, LoaderCircle } from 'lucide-react';
-import Button from './ui/Button';
-import CustomSelect from './ui/CustomSelect';
+import { Filter, LoaderCircle, Tag, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
+
+interface StockListProps {
+  filterColor: string;
+  groupByColor: boolean;
+  refreshTrigger?: number;
+}
 
 const BOOKMARK_COLORS = [
-  { name: 'All', value: '', color: 'transparent' }, 
   { name: 'Green', value: 'text-green-500', color: '#22c55e' },
   { name: 'Purple', value: 'text-purple-500', color: '#a21caf' },
   { name: 'Blue', value: 'text-blue-500', color: '#2563eb' },
@@ -17,35 +19,19 @@ const BOOKMARK_COLORS = [
   { name: 'Red', value: 'text-red-500', color: '#ef4444' },
 ];
 
-const StockList: React.FC = () => {
+const StockList: React.FC<StockListProps> = ({ filterColor, groupByColor, refreshTrigger }) => {
   const [stocks, setStocks] = useState<Stock[]>([]);
-  const [filteredStocks, setFilteredStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [filterColor, setFilterColor] = useState('');
-  const [groupByColor, setGroupByColor] = useState(false);
-  const [groupedStocks, setGroupedStocks] = useState<Record<string, Stock[]>>({});
 
   const loadStocks = async () => {
     setLoading(true);
     try {
-      let stocksData: Stock[];
-      if (filterColor) {
-        stocksData = await getStocksByBookmarkColor(getStocks, filterColor);
-      } else {
-        stocksData = await getStocks();
-      }
+      const stocksData: Stock[] = await getStocks();
       setStocks(stocksData);
-      setFilteredStocks(stocksData);
       setError('');
-      if (groupByColor) {
-        const grouped = await groupStocksByBookmarkColor(getStocks);
-        setGroupedStocks(grouped);
-      } else {
-        setGroupedStocks({});
-      }
     } catch (err) {
       console.error('Error loading stocks:', err);
       setError('Failed to load stocks. Please try again.');
@@ -56,18 +42,24 @@ const StockList: React.FC = () => {
 
   useEffect(() => {
     loadStocks();
-    // eslint-disable-next-line
-  }, [filterColor, groupByColor]);
+  }, [refreshTrigger]);
 
-  useEffect(() => {
-    const query = searchQuery.toLowerCase();
-    const filtered = stocks.filter(
-      (stock) =>
-        stock.ticker_symbol.toLowerCase().includes(query) ||
-        stock.display_name.toLowerCase().includes(query)
-    );
-    setFilteredStocks(filtered);
-  }, [searchQuery, stocks]);
+  // Filtering
+  const filteredStocks = stocks.filter((stock) => {
+    const matchesSearch =
+      stock.ticker_symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      stock.display_name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesColor = !filterColor || stock.bookmark_color === filterColor;
+    return matchesSearch && matchesColor;
+  });
+
+  // Grouping
+  const groupedStocks: Record<string, Stock[]> = {};
+  if (groupByColor) {
+    BOOKMARK_COLORS.forEach((c) => {
+      groupedStocks[c.value] = filteredStocks.filter((stock) => stock.bookmark_color === c.value);
+    });
+  }
 
   const handleStockDeleted = () => {
     loadStocks();
@@ -75,18 +67,6 @@ const StockList: React.FC = () => {
 
   const handleStockUpdated = () => {
     loadStocks();
-  };
-
-  const toggleDetails = () => {
-    setDetailsOpen((prev) => !prev);
-  };
-
-  const handleColorFilterChange = (colorValue: string) => {
-    setFilterColor(colorValue);
-  };
-
-  const handleGroupByColor = () => {
-    setGroupByColor((prev) => !prev);
   };
 
   return (
@@ -103,34 +83,14 @@ const StockList: React.FC = () => {
             />
             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
           </div>
-          <div className="min-w-[160px]">
-            <CustomSelect
-              options={BOOKMARK_COLORS.map(c => ({
-                label: c.name,
-                value: c.value,
-                color: c.color,
-              }))}
-              value={filterColor}
-              onChange={handleColorFilterChange}
-              className="w-full"
-            />
-          </div>
-          <Button
-            variant={groupByColor ? "primary" : "outline"}
-            onClick={handleGroupByColor}
-            title="Group by bookmark color"
-            className="flex items-center"
-          >
-            <Layers size={16} className="mr-1" />
-            {groupByColor ? "Ungroup" : "Group by color"}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={toggleDetails}
+          <button
+            type="button"
+            onClick={() => setDetailsOpen((prev) => !prev)}
             title={detailsOpen ? "Collapse all stock details" : "Expand all stock details"}
+            className="ml-2 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center hover:bg-gray-100 dark:hover:bg-gray-600 transition"
           >
             {detailsOpen ? <ChevronsDownUp size={16} /> : <ChevronsUpDown size={16} />}
-          </Button>
+          </button>
         </div>
       </div>
       {loading ? (
@@ -153,38 +113,30 @@ const StockList: React.FC = () => {
         </>
       ) : groupByColor ? (
         <div className="space-y-8">
-          {BOOKMARK_COLORS
-            .filter(c => c.value && (!filterColor || c.value === filterColor))
-            .map(c => {
-              const stocksInGroup = groupedStocks[c.value] || [];
-              if (stocksInGroup.length === 0) return null;
-              return (
-                <div key={c.value}>
-                  <div className="flex items-center mb-2">
-                    <Tag className={`${c.value} mr-2`} size={18} />
-                    <span className={`font-semibold ${c.value}`}>{c.name}</span>
-                    <span className="ml-2 text-xs text-gray-400">({stocksInGroup.length})</span>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {stocksInGroup
-                      .filter(
-                        (stock) =>
-                          stock.ticker_symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          stock.display_name.toLowerCase().includes(searchQuery.toLowerCase())
-                      )
-                      .map((stock) => (
-                        <StockCard
-                          key={stock.id || stock.ticker_symbol}
-                          stock={stock}
-                          onDelete={handleStockDeleted}
-                          onUpdate={handleStockUpdated}
-                          detailsOpen={detailsOpen}
-                        />
-                      ))}
-                  </div>
+          {BOOKMARK_COLORS.filter(c => !filterColor || c.value === filterColor).map((c) => {
+            const stocksInGroup = groupedStocks[c.value] || [];
+            if (stocksInGroup.length === 0) return null;
+            return (
+              <div key={c.value}>
+                <div className="flex items-center mb-2">
+                  <Tag className={`${c.value} mr-2`} size={18} />
+                  <span className={`font-semibold ${c.value}`}>{c.name}</span>
+                  <span className="ml-2 text-xs text-gray-400">({stocksInGroup.length})</span>
                 </div>
-              );
-            })}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {stocksInGroup.map((stock) => (
+                    <StockCard
+                      key={stock.id || stock.ticker_symbol}
+                      stock={stock}
+                      onDelete={handleStockDeleted}
+                      onUpdate={handleStockUpdated}
+                      detailsOpen={detailsOpen}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

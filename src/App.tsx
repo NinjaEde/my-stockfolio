@@ -4,6 +4,7 @@ import AddStockForm from "./components/AddStockForm";
 import StockList from "./components/StockList";
 import Auth from "./components/Auth";
 import AddMultiNotesPanel from "./components/AddMultiNotesPanel";
+import AddFilterPanel from "./components/AddFilterPanel";
 
 function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -17,6 +18,8 @@ function App() {
   const [username, setUsername] = useState<string | null>(() =>
     localStorage.getItem("username")
   );
+  const [filterColor, setFilterColor] = useState("");
+  const [groupByColor, setGroupByColor] = useState(false);
 
   useEffect(() => {
     // Add or remove the 'dark' class on the <html> element
@@ -47,6 +50,14 @@ function App() {
     localStorage.removeItem("username");
   };
 
+  const handleColorFilterChange = (colorValue: string) => {
+    setFilterColor(colorValue);
+  };
+
+  const handleGroupByColor = () => {
+    setGroupByColor((prev) => !prev);
+  };
+
   if (!token) {
     return <Auth onAuthSuccess={handleAuthSuccess} />;
   }
@@ -64,13 +75,25 @@ function App() {
           <div className="flex flex-col md:flex-row gap-6">
             <AddStockForm onStockAdded={handleStockAdded} />
             <AddMultiNotesPanel />
+            <AddFilterPanel
+              filterColor={filterColor}
+              onFilterColorChange={handleColorFilterChange}
+              groupByColor={groupByColor}
+              onGroupByColor={handleGroupByColor}
+            />
           </div>
-          <StockList key={refreshTrigger} />
+          <hr className="mt-8 mb-4 border-gray-200 dark:border-gray-700" />
+          <StockList
+            filterColor={filterColor}
+            groupByColor={groupByColor}
+            refreshTrigger={refreshTrigger}
+          />
         </main>
         <footer className="bg-blue-600 dark:bg-violet-900 text-gray-300 py-6 mt-12">
           <div className="container mx-auto px-4 text-center">
             <p className="text-sm">
-              &copy; {new Date().getFullYear()} StockfolioPro. All rights reserved.
+              &copy; {new Date().getFullYear()} StockfolioPro. All rights
+              reserved.
             </p>
           </div>
         </footer>

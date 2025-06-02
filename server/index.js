@@ -8,8 +8,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/stockfolio';
+const PORT = process.env.SERVER_PORT || 4000;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:27017/stockfolio';
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
 app.use(cors());
