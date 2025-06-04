@@ -29,8 +29,8 @@ const AddFilterPanel: React.FC<AddFilterPanelProps> = ({
   const [showMultiNotes, setShowMultiNotes] = useState(false);
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 w-full sm:w-full lg:w-1/3 flex flex-col items-center justify-center">
-        <div className="w-full flex items-center justify-between">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 w-full sm:w-full lg:w-1/3 flex flex-col items-start justify-start">
+        <div className="w-full flex flex-wrap gap-4 items-start justify-between">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-300 flex items-center">
                 <FunnelPlus className="w-5 h-5 mr-2 text-blue-600" />
                 Apply Filter

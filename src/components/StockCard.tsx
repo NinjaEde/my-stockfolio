@@ -289,10 +289,10 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
 
       {/* Collapsible Details Section with Animation */}
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedDetails ? 'max-h-[1200px] py-6' : 'max-h-0 py-0'}`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedDetails ? 'max-h-[1200px] py-4' : 'max-h-0 py-0'}`}
       >
         {expandedDetails && (
-          <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-6 flex-grow">
+          <CardContent className="border-t border-gray-100 dark:border-gray-600 space-y-4 flex-grow">
             <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-600 pb-2">
               <button
                 className={`relative px-4 py-2 text-sm font-medium ${activeTab === 'overview' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
@@ -326,7 +326,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
             </div>
 
             {activeTab === 'overview' && (
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 min-h-[340px]">
                 <section id={`symbol-info_${stock.ticker_symbol}`} className="flex-2 min-w-[150px]">
                   <div className="tradingview-widget-container">
                     <div className="tradingview-widget-container__widget"></div>

@@ -52,9 +52,9 @@ const AddStockForm: React.FC<AddStockFormProps> = ({ onStockAdded }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 w-full sm:w-full lg:w-1/3">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 w-full sm:w-full lg:w-1/3 flex flex-col items-start justify-start">
       <div 
-        className="flex items-center justify-between cursor-pointer" 
+        className="w-full flex items-center justify-between cursor-pointer" 
         onClick={() => setIsOpen(!isOpen)}
       >
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-300 flex items-center">
@@ -69,13 +69,13 @@ const AddStockForm: React.FC<AddStockFormProps> = ({ onStockAdded }) => {
       </div>
 
       <div 
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-screen py-4' : 'max-h-0 py-0'}`}
+        className={`w-full transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-screen py-4' : 'max-h-0 py-0'}`}
       >
         <form 
           onSubmit={handleSubmit} 
           className="space-y-4 px-2"
         >
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-row sm:flex-col sm:items-start gap-4 w-full">
             <Input
               label="Ticker Symbol"
               placeholder="e.g., AAPL"
