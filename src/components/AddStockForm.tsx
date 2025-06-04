@@ -75,7 +75,7 @@ const AddStockForm: React.FC<AddStockFormProps> = ({ onStockAdded }) => {
           onSubmit={handleSubmit} 
           className="space-y-4 px-2"
         >
-          <div className="flex flex-row sm:flex-col sm:items-start gap-4 w-full">
+            <div className="flex flex-col md:flex-row sm:items-start gap-4 w-full">
             <Input
               label="Ticker Symbol"
               placeholder="e.g., AAPL"
