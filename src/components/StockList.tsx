@@ -3,7 +3,7 @@ import { getStocks } from '../services/stockService';
 import { Stock } from '../types';
 import StockCard from './StockCard';
 import Input from './ui/Input';
-import { Filter, LoaderCircle, Tag, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
+import { Filter, LoaderCircle, Tag, ListCollapse, List } from 'lucide-react';
 
 interface StockListProps {
   filterColor: string;
@@ -89,7 +89,7 @@ const StockList: React.FC<StockListProps> = ({ filterColor, groupByColor, refres
             title={detailsOpen ? "Collapse all stock details" : "Expand all stock details"}
             className="ml-2 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center hover:bg-gray-100 dark:hover:bg-gray-600 transition"
           >
-            {detailsOpen ? <ChevronsDownUp size={16} /> : <ChevronsUpDown size={16} />}
+            {detailsOpen ? <List size={16} /> : <ListCollapse size={16} />}
           </button>
         </div>
       </div>
