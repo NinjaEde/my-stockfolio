@@ -252,7 +252,7 @@ const StockNotes: React.FC<StockNotesProps> = ({ stockId, onNotesUpdated, showSt
       <div className="flex justify-end">
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={openWizard}
           className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"

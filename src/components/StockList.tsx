@@ -72,7 +72,7 @@ const StockList: React.FC<StockListProps> = ({ filterColor, groupByColor, refres
   return (
     <div className="space-y-4">
       <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-2'>
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-400 mt-8 mb-4">My Portfolio</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-purple-600 mt-8 mb-4">My Portfolio</h2>
         <div className="flex flex-wrap items-center space-x-2 md:space-x-4">
           <div className="relative">
             <Input
@@ -89,7 +89,7 @@ const StockList: React.FC<StockListProps> = ({ filterColor, groupByColor, refres
             title={detailsOpen ? "Collapse all stock details" : "Expand all stock details"}
             className="ml-2 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center hover:bg-gray-100 dark:hover:bg-gray-600 transition"
           >
-            {detailsOpen ? <List size={16} /> : <ListCollapse size={16} />}
+            {detailsOpen ? <ListCollapse size={16} /> : <List size={16} />}
           </button>
         </div>
       </div>

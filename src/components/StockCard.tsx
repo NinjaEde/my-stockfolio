@@ -359,7 +359,7 @@ const StockCard: React.FC<StockCardProps> = ({ stock, onDelete, detailsOpen, onU
         )}
       </div>
 
-      <CardFooter className="flex justify-between items-center dark:bg-gray-700 mt-auto">
+      <CardFooter className="flex justify-between items-center dark:bg-gray-700 opacity-80 mt-auto">
         <p className="text-xs text-gray-500 dark:text-gray-300">
           Added on {new Date(stock.created_at).toLocaleDateString()}
         </p>

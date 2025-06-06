@@ -12,7 +12,7 @@ services:
       - stockfolio-network
 
   mongo:
-    image: mongo:latest
+    image: mongo:8.0
     container_name: stockfolio-mongo
     ports:
       - "27017:27017"
